@@ -1,0 +1,57 @@
+/*
+   COMP693 S2 2025 - Industry Project
+   Script file for MySQL DBMS
+   Created By: Tina Ma
+   Description: Create the shopping mall database and related tables
+   Created Date: 28/07/2025
+   Version: 1.0
+*/
+
+-- Create a new database
+CREATE DATABASE shoppingmall;
+
+-- Use shoppingmall database to create related tables based on the ERD
+USE shoppingmall;
+
+-- 1. City lookup
+CREATE TABLE city (
+  id   INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- 2. Classification lookup
+CREATE TABLE classification (
+  id   INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- 3. Centre Type lookup
+CREATE TABLE centre_type (
+  id   INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- 4. Shopping Centre “fact” table
+CREATE TABLE shopping_centre (
+  id                 INT AUTO_INCREMENT PRIMARY KEY,
+  city_id            INT NOT NULL,
+  classification_id  INT DEFAULT NULL,
+  centre_type_id     INT DEFAULT NULL,
+  name               VARCHAR(255)    NOT NULL,
+  osm_name           VARCHAR(255)    DEFAULT NULL,
+  location           TEXT            DEFAULT NULL,
+  date_opened        DATE            DEFAULT NULL,
+  site_area_ha       DECIMAL(10,4)   DEFAULT NULL,
+  covered_parking_num  INT           DEFAULT NULL,
+  uncovered_parking_num INT          DEFAULT NULL,
+  redevelopments     TEXT            DEFAULT NULL,
+  levels             INT             DEFAULT NULL,
+  total_retail_space DECIMAL(12,2)   DEFAULT NULL,
+
+  CONSTRAINT fk_city       FOREIGN KEY (city_id)           REFERENCES city(id)           ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT fk_class      FOREIGN KEY (classification_id) REFERENCES classification(id) ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_type       FOREIGN KEY (centre_type_id)    REFERENCES centre_type(id)    ON UPDATE CASCADE ON DELETE SET NULL
+);
+
+
+
