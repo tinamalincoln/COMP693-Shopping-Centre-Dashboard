@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}Shopping Centre Search Result{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Search Result: {{ centre.name }}</h2>
+
+<div class="row">
+  <div class="col-md-6">
+    <ul class="list-group">
+      <li class="list-group-item"><strong>Location:</strong> {{ centre.location }}</li>
+      <li class="list-group-item"><strong>Classification:</strong> {{ centre.classification }}</li>
+      <li class="list-group-item"><strong>Centre Type:</strong> {{ centre.centre_type }}</li>
+      <li class="list-group-item"><strong>Total Retail Space:</strong> {{ centre.total_retail_space or 'N/A' }} m²</li>
+      <li class="list-group-item"><strong>Date Opened:</strong> {{ centre.date_opened or 'N/A' }}</li>
+    </ul>
+  </div>
+
+  <div class="col-md-6">
+    <div id="map" style="height: 400px;"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var lat = "{{ lat | tojson }}";
+    var lon = "{{ lon | tojson }}";
+    var centreName = "{{ centre.name | tojson }}";
+
+    var map = L.map('map').setView([lat, lon], 16);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    L.marker([lat, lon]).addTo(map)
+      .bindPopup(centreName)
+      .openPopup();
+  });
+</script>
+{% endblock %}
