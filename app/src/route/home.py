@@ -1,35 +1,44 @@
 from flask import render_template, request
-from app import app
-from app.db import get_cursor
+from app import app, db
 import requests
-import urllib.parse
 
-@app.route('/')
-def home():
-    return render_template('search.html')
-
-@app.route('/search')
+@app.route("/search")
 def search():
-    q = request.args.get('q', '').strip()
-    centre = None
-    lat = lon = None
-    searched = False
+    centre_name = request.args.get("name")
 
-    if q:
-        searched = True
-        with get_cursor() as cursor:
-            cursor.execute("SELECT * FROM shopping_centre WHERE name LIKE %s OR osm_name LIKE %s", (f"%{q}%", f"%{q}%"))
-            centre = cursor.fetchone()
+    if not centre_name:
+        return render_template("search.html", error="No shopping centre specified.")
 
-        if centre and centre.get('osm_name'):
-            osm_query = urllib.parse.quote(centre['osm_name'])
-            url = f"https://nominatim.openstreetmap.org/search?q={osm_query}+Christchurch&format=json&limit=1"
-            headers = {'User-Agent': 'ShoppingCentreMapApp'}
-            r = requests.get(url, headers=headers)
-            if r.ok and r.json():
-                lat = r.json()[0]['lat']
-                lon = r.json()[0]['lon']
-            else:
-                centre = None  # Hide map if no coords found
+    with db.get_cursor() as cursor:
+        cursor.execute("""
+            SELECT 
+                sc.name, sc.osm_name, sc.location, sc.total_retail_space, sc.date_opened,
+                c.name AS classification, t.name AS centre_type
+            FROM shopping_centre sc
+            LEFT JOIN classification c ON sc.classification_id = c.id
+            LEFT JOIN centre_type t ON sc.centre_type_id = t.id
+            WHERE sc.osm_name = %s
+        """, (centre_name,))
+        centre = cursor.fetchone()
 
-    return render_template("search.html", centre=centre, lat=lat, lon=lon, searched=searched)
+    if not centre:
+        return render_template("search.html", error="Shopping centre not found.")
+
+    # Use OpenStreetMap's Nominatim to get coordinates
+    query = centre['location'] or centre['name']
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {
+        "q": query + ", Christchurch, New Zealand",
+        "format": "json",
+        "limit": 1
+    }
+
+    response = requests.get(url, headers={"User-Agent": "shopping-centre-dashboard"}, params=params)
+
+    if response.status_code == 200 and response.json():
+        location = response.json()[0]
+        lat, lon = float(location["lat"]), float(location["lon"])
+    else:
+        lat, lon = -43.5321, 172.6362  # Fallback: Christchurch city centre
+
+    return render_template("search.html", centre=centre, lat=lat, lon=lon)
