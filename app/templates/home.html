@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}Shopping Centre Dashboard{% endblock %}
+
+{% block content %}
+<style>
+  .full-height-container {
+    display: flex;
+    height: calc(100vh - 120px); /* navbar + footer adjustment */
+  }
+
+  .list-panel {
+    width: 33.33%;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ccc;
+  }
+
+  #map {
+    width: 66.66%;
+    height: 100%;
+  }
+
+  .centre-link {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .full-height-container {
+      flex-direction: column;
+      height: auto;
+    }
+    .list-panel, #map {
+      width: 100%;
+      height: 400px;
+    }
+  }
+</style>
+
+<div class="full-height-container">
+  <!-- Shopping centre list -->
+  <div class="list-panel">
+    <h4>Shopping Centres</h4>
+    <form method="get" action="{{ url_for('search') }}" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="name" class="form-control" list="centreSuggestions" placeholder="Search by OSM Name" required>
+            <datalist id="centreSuggestions">
+                {% for centre in centres %}
+                <option value="{{ centre.osm_name }}">{{ centre.name }}</option>
+                {% endfor %}
+            </datalist>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    {% for centre in centres %}
+      <a class="centre-link" href="{{ url_for('search') }}?name={{ centre.osm_name }}">
+        {{ centre.name }} 
+      </a>
+    {% else %}
+      <p>No centres found.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Map -->
+  <div id="map"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var map = L.map('map').setView(['{{ lat }}', '{{ lon }}'], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+    }).addTo(map);
+  });
+</script>
+{% endblock %}
