@@ -3,10 +3,13 @@
 {% block title %}Shopping Centre Search Result{% endblock %}
 
 {% block content %}
+
+
+{% if centre %}
 <style>
   .full-height-container {
     display: flex;
-    height: calc(100vh - 120px); /* Adjust for navbar & footer height */
+    height: calc(100vh - 120px);
   }
   .info-panel {
     width: 33.33%;
@@ -19,7 +22,6 @@
     width: 66.66%;
     height: 100%;
   }
-
   @media (max-width: 768px) {
     .full-height-container {
       flex-direction: column;
@@ -33,7 +35,7 @@
 </style>
 
 <div class="full-height-container">
-  <!-- Left: Info panel -->
+  <!-- Info panel -->
   <div class="info-panel">
     <h4>{{ centre.name }}</h4>
     <ul class="list-group">
@@ -45,14 +47,14 @@
     </ul>
   </div>
 
-  <!-- Right: Map -->
+  <!-- Map -->
   <div id="map"></div>
 </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var lat = '{{ lat | tojson }}';
-    var lon = '{{ lon | tojson }}';
+    var lat = '{{ lat }}';
+    var lon = '{{ lon }}';
     var centreName = '{{ centre.name | tojson }}';
 
     var map = L.map('map').setView([lat, lon], 16);
@@ -68,5 +70,8 @@
   });
 </script>
 
+{% elif error %}
+<div class="alert alert-danger mt-3">{{ error }}</div>
+{% endif %}
 
 {% endblock %}
