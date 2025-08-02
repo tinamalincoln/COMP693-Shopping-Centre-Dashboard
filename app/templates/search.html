@@ -37,42 +37,43 @@
 <div class="full-height-container">
   <!-- Info panel -->
 <div class="info-panel">
-  <h4 class="mb-3">{{ centre.name }}</h4>
+  <h4 class="mb-3"><i class="fas fa-store"></i> {{ centre.name }}</h4>
 
   <div class="card mb-3">
     <div class="card-header bg-primary text-white">
-      General Information
+      <i class="fas fa-info-circle"></i> General Information
     </div>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item"><strong>Location:</strong> {{ centre.location }}</li>
-      <li class="list-group-item"><strong>Classification:</strong> {{ centre.classification }}</li>
-      <li class="list-group-item"><strong>Centre Type:</strong> {{ centre.centre_type }}</li>
-      <li class="list-group-item"><strong>Date Opened:</strong> {{ centre.date_opened or 'N/A' }}</li>
+      <li class="list-group-item"><i class="fas fa-map-marker-alt me-2"></i><strong>Location:</strong> {{ centre.location }}</li>
+      <li class="list-group-item"><i class="fas fa-tags me-2"></i><strong>Classification:</strong> {{ centre.classification }}</li>
+      <li class="list-group-item"><i class="fas fa-building me-2"></i><strong>Centre Type:</strong> {{ centre.centre_type }}</li>
+      <li class="list-group-item"><i class="fas fa-calendar-alt me-2"></i><strong>Date Opened:</strong> {{ centre.date_opened or 'N/A' }}</li>
     </ul>
   </div>
 
   <div class="card mb-3">
     <div class="card-header bg-success text-white">
-      Size & Facilities
+      <i class="fas fa-ruler-combined"></i> Size & Facilities
     </div>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item"><strong>Total Retail Space:</strong> {{ centre.total_retail_space or 'N/A' }} m²</li>
-      <li class="list-group-item"><strong>Site Area:</strong> {{ centre.site_area_ha or 'N/A' }} ha</li>
-      <li class="list-group-item"><strong>Levels:</strong> {{ centre.levels or 'N/A' }}</li>
+      <li class="list-group-item"><i class="fas fa-expand-arrows-alt me-2"></i><strong>Total Retail Space:</strong> {{ centre.total_retail_space or 'N/A' }} m²</li>
+      <li class="list-group-item"><i class="fas fa-vector-square me-2"></i><strong>Site Area:</strong> {{ centre.site_area_ha or 'N/A' }} ha</li>
+      <li class="list-group-item"><i class="fas fa-layer-group me-2"></i><strong>Levels:</strong> {{ centre.levels or 'N/A' }}</li>
     </ul>
   </div>
 
   <div class="card mb-3">
     <div class="card-header bg-info text-white">
-      Parking & Development
+      <i class="fas fa-parking"></i> Parking & Development
     </div>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item"><strong>Covered Parking:</strong> {{ centre.covered_parking_num or 0 }}</li>
-      <li class="list-group-item"><strong>Uncovered Parking:</strong> {{ centre.uncovered_parking_num or 0 }}</li>
-      <li class="list-group-item"><strong>Redevelopments:</strong> {{ centre.redevelopments or 'N/A' }}</li>
+      <li class="list-group-item"><i class="fas fa-car me-2"></i><strong>Covered Parking:</strong> {{ centre.covered_parking_num or 0 }}</li>
+      <li class="list-group-item"><i class="fas fa-car-side me-2"></i><strong>Uncovered Parking:</strong> {{ centre.uncovered_parking_num or 0 }}</li>
+      <li class="list-group-item"><i class="fas fa-tools me-2"></i><strong>Redevelopments:</strong> {{ centre.redevelopments or 'N/A' }}</li>
     </ul>
   </div>
 </div>
+
 
 
 
