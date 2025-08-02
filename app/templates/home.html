@@ -46,7 +46,7 @@
     <h4>Shopping Centres</h4>
     <form method="get" action="{{ url_for('search') }}" class="mb-3">
         <div class="input-group">
-            <input type="text" name="name" class="form-control" list="centreSuggestions" placeholder="Search by OSM Name" required>
+            <input type="text" name="name" class="form-control" list="centreSuggestions" placeholder="Search by Shopping Centre Name" required>
             <datalist id="centreSuggestions">
                 {% for centre in centres %}
                 <option value="{{ centre.osm_name }}">{{ centre.name }}</option>
