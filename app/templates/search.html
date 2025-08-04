@@ -72,8 +72,15 @@
       <li class="list-group-item"><i class="fas fa-tools me-2"></i><strong>Redevelopments:</strong> {{ centre.redevelopments or 'N/A' }}</li>
     </ul>
   </div>
+  
+  <div class="text-center my-3">
+    <a href="{{ classic_map_url }}"
+       target="_blank" 
+       class="btn btn-outline-primary">
+      <i class="fas fa-users"></i> View Population Reach on ORS Map
+    </a>
+  </div>
 </div>
-
 
 
 
@@ -99,6 +106,8 @@
       .openPopup();
   });
 </script>
+
+
 
 {% elif error %}
 <div class="alert alert-danger mt-3">{{ error }}</div>
