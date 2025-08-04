@@ -2,16 +2,16 @@
    COMP693 S2 2025 - Industry Project
    Script file for MySQL DBMS
    Created By: Tina Ma
-   Description: Create the shopping mall database and related tables
+   Description: Create the shopping centre database and related tables
    Created Date: 28/07/2025
    Version: 1.0
 */
 
 -- Create a new database
-CREATE DATABASE shoppingmall;
+CREATE DATABASE shoppingcentre;
 
--- Use shoppingmall database to create related tables based on the ERD
-USE shoppingmall;
+-- Use shoppingcentre database to create related tables based on the ERD
+USE shoppingcentre;
 
 -- 1. City lookup
 CREATE TABLE city (
