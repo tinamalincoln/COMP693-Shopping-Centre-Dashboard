@@ -1,6 +1,11 @@
 from flask import render_template, request
 from app import app, db
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+ORS_API_KEY = os.getenv("ORS_API_KEY")
 
 @app.route("/")
 def home():
@@ -16,9 +21,7 @@ def home():
         """)
         centres = cursor.fetchall()
 
-    # Default location to center map on Christchurch
     default_lat, default_lon = -43.5321, 172.6362
-
     return render_template("home.html", centres=centres, lat=default_lat, lon=default_lon)
 
 
@@ -48,7 +51,7 @@ def search():
     query = centre['osm_name']
     url = "https://nominatim.openstreetmap.org/search"
     params = {
-        "q": query + ", Christchurch, New Zealand",
+        "q": query,
         "format": "json",
         "limit": 1
     }
@@ -61,4 +64,12 @@ def search():
     else:
         lat, lon = -43.5321, 172.6362
 
-    return render_template("search.html", centre=centre, lat=lat, lon=lon)
+    classic_map_url = f"https://classic-maps.openrouteservice.org/reach?n1={lat}&n2={lon}&n3=15&a={lat},{lon}&b=0&i=0&j1=10&j2=2&k1=en-US&k2=km"
+
+    return render_template(
+        "search.html",
+        centre=centre,
+        lat=lat,
+        lon=lon,
+        classic_map_url=classic_map_url
+    )
