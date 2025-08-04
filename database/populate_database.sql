@@ -7,8 +7,8 @@
    Version: 1.0
 */
 
--- Use shoppingmall database to insert data into related tables
-USE shoppingmall;
+-- Use shoppingcentre database to insert data into related tables
+USE shoppingcentre;
 
 -- City
 INSERT INTO city (name) VALUES
