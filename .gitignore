@@ -209,3 +209,8 @@ __marimo__/
 # Connect to mySQL
 app/connect.py
 *.db
+
+# Ignore uploads folder
+/static/uploads/
+/static/img/
+/app/static/uploads
