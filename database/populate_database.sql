@@ -34,7 +34,7 @@ INSERT INTO centre_type (name) VALUES
 
 INSERT INTO shopping_centre (
   city_id, classification_id, centre_type_id,
-  name, osm_name, location, date_opened, site_area_ha,
+  name, osm_name, image_filename, location, date_opened, site_area_ha,
   covered_parking_num, uncovered_parking_num, redevelopments, levels, total_retail_space
 ) VALUES
 -- Avonhead Shopping Centre
@@ -44,6 +44,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'Avonhead Shopping Centre',
   'Avonhead Shopping Mall',
+  'Avonhead_1.jpg',
   'Corner Merrin Street and Withells Road, Avonhead, Christchurch',
   '1993-11-01', 0.9211,
   0, 556, '', 1, 3689.55
@@ -55,6 +56,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Integrated Centre'),
   'Barrington',
   'Mall Barrington',
+   NULL,
   '256 Barrington Street, Spreydon, Christchurch',
   '1973-11-01', 1.2629,
   0, 148,
@@ -68,6 +70,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Mall'),
   'Bishopdale',
   'Bishopdale Village Mall',
+   NULL,
   'Harewood Road and Farrington Avenue, Bishopdale, Christchurch',
   NULL, 3.0966,
   0, 600, '', 2, NULL
@@ -79,6 +82,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Bulk Retail Centre'),
   'Blenheim Square',
   'Mall Blenheim square',
+   NULL,
   '217 Blenheim Road, Riccarton, Christchurch',
   NULL, NULL,
   0, 140, '', 1, 3780.03
@@ -90,6 +94,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Integrated Centre'),
   'BNZ Centre',
   'BNZ Centre',
+   NULL,
   '109 Cashel Street, 120 Hereford Street, CBD, Christchurch',
   '2016-01-01', 1.0000,
   0, 0, '', 1, 4356.04
@@ -101,6 +106,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Integrated Centre'),
   'Brackenfields',
   'Amberley Shopping Centre (no OSM match)',
+   NULL,
   '115-135 Carters Road, Amberley, Christchurch',
   '2014-07-01', 4.0000,
   0, 400, '', 1, 5739.00
@@ -112,6 +118,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Integrated Centre'),
   'Bush Inn Shopping Centre',
   'Bush Inn Shopping Centre',
+   NULL,
   'Corner Waimairi and Riccarton Roads, Upper Riccarton, Christchurch',
   '1988-11-01', 3.7675,
   151, 543,
@@ -125,6 +132,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'Dress-Smart Hornby',
   'Dress Smart',
+   NULL,
   '409 Main South Road, Hornby, Christchurch',
   '1998-10-31',1.2190,
   166, 181,
@@ -138,6 +146,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'Eastgate Shopping Centre',
   'Mall Eastgate Shopping Centre',
+   NULL,
   '20 Buckleys Road, Linwood, Christchurch',
   '2003-01-01', 6.4460,
   0, 1100,
@@ -151,6 +160,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Mall'),
   'Fendalton Mall',
   'Fendalton Shops',
+   NULL,
   '19-23 Memorial Avenue, Fendalton, Christchurch',
   '1970-12-01', 1.5000,
   0, 211,
@@ -164,6 +174,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Bulk Retail Centre'),
   'Homebase',
   'Home Base Shopping Centre',
+   NULL,
   'Marshland Road, Shirley, Christchurch',
   '2008-03-01', 1.7348,
   0, 384, '', 1, 17338.53
@@ -175,6 +186,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Bulk Retail Centre'),
   'Hornby Mega Centre',
   'Hornby Mega Centre',
+   NULL,
   '2 Chappie Place, Hornby, Christchurch',
   '2013-09-01', 5.5000,
   0, 800, '', 1, 23196.00
@@ -186,6 +198,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'Merivale Mall',
   'Mall Merivale Mall',
+   NULL,
   '189 Papanui Road, Merivale, Christchurch',
   '1980-01-01',1.8884,
   0, 435,
@@ -199,6 +212,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Bulk Retail Centre'),
   'Midway Moorhouse',
   '200 Moorhouse Avenue',
+   NULL,
   '200-218 Moorhouse Avenue, CBD, Christchurch',
   '2013-01-01',4.0000,
   0, 260, '', 1, 10353.99
@@ -210,6 +224,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Integrated Centre'),
   'Moorhouse Central',
   '347 Moorhouse Avenue',
+   NULL,
   '347 Moorhouse Avenue, CBD, Christchurch',
   '1990-01-01',1.7000,
   0, 310, '', 1, 6430.75
@@ -221,6 +236,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'Northlands',
   'Northlands Mall',
+   NULL,
   '55 Main North Road, Papanui, Christchurch',
   '1967-11-01',8.5000,
   705, 1003,
@@ -234,6 +250,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Mall'),
   'Parklands Shopping Centre',
   'Retail Parklands Shopping Centre',
+   NULL,
   '60 Queenspark Drive, Parklands, Christchurch',
   '1980-01-01',1.3496,
   0, 205,
@@ -248,6 +265,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Mall'),
   'Rolleston Square',
   'Rolleston Square',
+   NULL,
   'Rolleston Square, Rolleston, Christchurch',
   '2007-03-01',2.6458,
   0, 250,
@@ -261,6 +279,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Integrated Centre'),
   'SOUTH CITY SHOPPING CENTRE',
   'Mall South City Shopping Centre',
+   NULL,
   '555 Colombo Street, CBD, Christchurch',
   '1990-11-01',3.3000,
   0, 600,
@@ -274,6 +293,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'The Colombo',
   'The Colombo',
+   NULL,
   '363 Colombo Street, Sydenham, Christchurch',
   '1984-12-01',1.4944,
   0, 257,
@@ -287,6 +307,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Integrated Centre'),
   'The Hub Hornby',
   'The Hub Hornby Mall',
+   NULL,
   '416-418 Main South Road, Hornby, Christchurch',
   '1977-01-01',3.6000,
   0, 735,
@@ -300,6 +321,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'The Palms, Shirley',
   'The Palms Shopping Centre Mall',
+   NULL,
   'Corner Marshland and New Brighton Road, Shirley, Christchurch',
   '1996-10-01',5.5000,
   618, 855, '2011', 2, 27321.00
@@ -311,6 +333,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Integrated Centre'),
   'The Tannery',
   'The Tannery Retail',
+   NULL,
   '3 Garlands Road, Woolston, Christchurch',
   '2013-01-01',2.0000,
   0, 150, '', 1, 11040.00
@@ -322,6 +345,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Bulk Retail Centre'),
   'Tower Junction Mega Centre',
   'Tower Junction Retail',
+   NULL,
   'Corner Clarence and Foster Streets, Addington, Christchurch',
   '2006-03-01',6.4950,
   0, 900, '', 1, 31027.00
@@ -333,6 +357,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Mall'),
   'Tower Junction Village',
   'Tower Junction Retail',
+   NULL,
   'Corner Whiteleigh Ave and Troup Drive, Addington, Christchurch',
   '2005-12-01',4.1079,
   0, 294, '', 1, 4269.00
@@ -344,6 +369,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Integrated Centre'),
   'Westfield Riccarton',
   'Westfield Riccarton Mall',
+   NULL,
   '129 Riccarton Road, Riccarton, Christchurch',
   '1965-11-01',8.1773,
   1427, 973,
@@ -357,6 +383,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Open Mall'),
   'THE CROSSING',
   'The Crossing Mall',
+   NULL,
   '166 Cashel Street, Christchurch',
   '2017-09-09',1.0000,
   650, 0, '', 3, 12904.00
