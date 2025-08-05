@@ -1,8 +1,10 @@
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for, flash
 from app import app, db
 import requests
 import os
 from dotenv import load_dotenv
+
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 ORS_API_KEY = os.getenv("ORS_API_KEY")
@@ -73,3 +75,38 @@ def search():
         lon=lon,
         classic_map_url=classic_map_url
     )
+
+
+
+
+@app.route("/edit/<int:centre_id>", methods=["POST"])
+def edit_centre(centre_id):
+    form = request.form
+    image_file = request.files.get("image")
+
+    with db.get_cursor(commit=True) as cursor:
+        # Update the fields
+        cursor.execute("""
+            UPDATE shopping_centre
+            SET name=%s, osm_name=%s, location=%s, date_opened=%s, site_area_ha=%s,
+                covered_parking_num=%s, uncovered_parking_num=%s, redevelopments=%s,
+                levels=%s, total_retail_space=%s
+            WHERE id=%s
+        """, (
+            form["name"], form["osm_name"], form["location"], form["date_opened"],
+            form["site_area_ha"], form["covered_parking_num"], form["uncovered_parking_num"],
+            form["redevelopments"], form["levels"], form["total_retail_space"], centre_id
+        ))
+
+        # Handle image upload
+        if image_file and image_file.filename != "":
+            filename = secure_filename(image_file.filename)
+            ext = filename.rsplit(".", 1)[-1].lower()
+            new_filename = f"{form['name'].replace(' ', '')}_{centre_id}.{ext}"
+            image_path = os.path.join("static", "uploads", "centre_photo", new_filename)
+            image_file.save(image_path)
+
+            cursor.execute("UPDATE shopping_centre SET image_filename=%s WHERE id=%s", (new_filename, centre_id))
+
+    flash("Centre updated successfully.", "success")
+    return redirect(url_for("search", name=form["osm_name"]))
