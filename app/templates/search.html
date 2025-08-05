@@ -89,12 +89,76 @@
   </div>
 </div>
 
+<!-- Edit Centre Button -->
+<div class="text-end">
+  <button class="btn btn-warning" data-bs-toggle="offcanvas" data-bs-target="#editCentreCanvas">
+    <i class="fas fa-edit"></i> Edit Centre
+  </button>
+</div>
 
 
   <!-- Map -->
   <div id="map"></div>
 </div>
 
+<!-- Offcanvas Edit Form -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="editCentreCanvas" aria-labelledby="editCentreLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="editCentreLabel">Edit {{ centre.name }}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form action="{{ url_for('edit_centre', centre_id=centre.id) }}" method="POST" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input type="text" name="name" class="form-control" value="{{ centre.name }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">OSM Name</label>
+        <input type="text" name="osm_name" class="form-control" value="{{ centre.osm_name }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Location</label>
+        <input type="text" name="location" class="form-control" value="{{ centre.location }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Date Opened</label>
+        <input type="date" name="date_opened" class="form-control" value="{{ centre.date_opened }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Site Area (ha)</label>
+        <input type="number" step="0.0001" name="site_area_ha" class="form-control" value="{{ centre.site_area_ha }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Covered Parking</label>
+        <input type="number" name="covered_parking_num" class="form-control" value="{{ centre.covered_parking_num }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Uncovered Parking</label>
+        <input type="number" name="uncovered_parking_num" class="form-control" value="{{ centre.uncovered_parking_num }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Redevelopments</label>
+        <textarea name="redevelopments" class="form-control">{{ centre.redevelopments }}</textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Levels</label>
+        <input type="number" name="levels" class="form-control" value="{{ centre.levels }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Total Retail Space (m²)</label>
+        <input type="number" step="0.01" name="total_retail_space" class="form-control" value="{{ centre.total_retail_space }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Replace Centre Image</label>
+        <input type="file" name="image" class="form-control">
+      </div>
+      <button type="submit" class="btn btn-success w-100 mt-3">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<!-- Map Script -->
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var lat = '{{ lat }}';
