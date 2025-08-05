@@ -39,6 +39,7 @@ CREATE TABLE shopping_centre (
   centre_type_id     INT DEFAULT NULL,
   name               VARCHAR(255)    NOT NULL,
   osm_name           VARCHAR(255)    DEFAULT NULL,
+  image_filename     VARCHAR(100)    DEFAULT NULL,
   location           TEXT            DEFAULT NULL,
   date_opened        DATE            DEFAULT NULL,
   site_area_ha       DECIMAL(10,4)   DEFAULT NULL,
