@@ -35,7 +35,7 @@ def search():
     with db.get_cursor() as cursor:
         cursor.execute("""
             SELECT 
-                sc.name, sc.osm_name, sc.location, sc.total_retail_space, sc.date_opened, sc.site_area_ha, 
+                sc.name, sc.osm_name, sc.image_filename, sc.location, sc.total_retail_space, sc.date_opened, sc.site_area_ha, 
                 sc.covered_parking_num, sc.uncovered_parking_num, sc.redevelopments, sc.levels,
                 c.name AS classification, t.name AS centre_type
             FROM shopping_centre sc
