@@ -39,6 +39,13 @@
 <div class="info-panel">
   <h4 class="mb-3"><i class="fas fa-store"></i> {{ centre.name }}</h4>
 
+  {% if centre.image_filename %}
+  <img src="{{ url_for('static', filename='uploads/centre_photo/' ~ centre.image_filename) }}"
+       alt="Photo of {{ centre.name }}"
+       class="img-fluid rounded mb-3">
+  {% endif %}
+
+
   <div class="card mb-3">
     <div class="card-header bg-primary text-white">
       <i class="fas fa-info-circle"></i> General Information
