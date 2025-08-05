@@ -51,7 +51,7 @@ def search():
     query = centre['osm_name']
     url = "https://nominatim.openstreetmap.org/search"
     params = {
-        "q": query,
+        "q": query + ", Christchurch, New Zealand",
         "format": "json",
         "limit": 1
     }
