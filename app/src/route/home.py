@@ -3,8 +3,8 @@ from app import app, db
 import requests
 import os
 from dotenv import load_dotenv
-
 from werkzeug.utils import secure_filename
+from datetime import datetime
 
 load_dotenv()
 ORS_API_KEY = os.getenv("ORS_API_KEY")
@@ -14,7 +14,7 @@ def home():
     with db.get_cursor() as cursor:
         cursor.execute("""
             SELECT 
-                sc.name, sc.osm_name, sc.location,
+                sc.id, sc.name, sc.osm_name, sc.location,
                 c.name AS classification, t.name AS centre_type
             FROM shopping_centre sc
             LEFT JOIN classification c ON sc.classification_id = c.id
@@ -37,7 +37,7 @@ def search():
     with db.get_cursor() as cursor:
         cursor.execute("""
             SELECT 
-                sc.name, sc.osm_name, sc.image_filename, sc.location, sc.total_retail_space, sc.date_opened, sc.site_area_ha, 
+                sc.id, sc.name, sc.osm_name, sc.image_filename, sc.location, sc.total_retail_space, sc.date_opened, sc.site_area_ha, 
                 sc.covered_parking_num, sc.uncovered_parking_num, sc.redevelopments, sc.levels,
                 c.name AS classification, t.name AS centre_type
             FROM shopping_centre sc
@@ -73,9 +73,9 @@ def search():
         centre=centre,
         lat=lat,
         lon=lon,
-        classic_map_url=classic_map_url
+        classic_map_url=classic_map_url,
+        timestamp=datetime.now().timestamp()
     )
-
 
 
 
@@ -84,8 +84,12 @@ def edit_centre(centre_id):
     form = request.form
     image_file = request.files.get("image")
 
-    with db.get_cursor(commit=True) as cursor:
-        # Update the fields
+    # ✅ Always resolve full path from app root
+    upload_folder = os.path.join(app.root_path, "static", "uploads", "centre_photo")
+    os.makedirs(upload_folder, exist_ok=True)
+
+    with db.get_cursor() as cursor:
+        # Update centre fields
         cursor.execute("""
             UPDATE shopping_centre
             SET name=%s, osm_name=%s, location=%s, date_opened=%s, site_area_ha=%s,
@@ -98,15 +102,29 @@ def edit_centre(centre_id):
             form["redevelopments"], form["levels"], form["total_retail_space"], centre_id
         ))
 
-        # Handle image upload
         if image_file and image_file.filename != "":
+            # Construct new filename
             filename = secure_filename(image_file.filename)
             ext = filename.rsplit(".", 1)[-1].lower()
             new_filename = f"{form['name'].replace(' ', '')}_{centre_id}.{ext}"
-            image_path = os.path.join("static", "uploads", "centre_photo", new_filename)
-            image_file.save(image_path)
+            new_image_path = os.path.join(upload_folder, new_filename)
 
-            cursor.execute("UPDATE shopping_centre SET image_filename=%s WHERE id=%s", (new_filename, centre_id))
+            # Delete old image if different
+            cursor.execute("SELECT image_filename FROM shopping_centre WHERE id = %s", (centre_id,))
+            result = cursor.fetchone()
+            old_filename = result.get("image_filename") if result else None
+            if old_filename and old_filename != new_filename:
+                old_image_path = os.path.join(upload_folder, old_filename)
+                if os.path.exists(old_image_path):
+                    os.remove(old_image_path)
 
+            # Save new image
+            image_file.save(new_image_path)
+
+            # Update DB with new filename
+            cursor.execute("UPDATE shopping_centre SET image_filename=%s WHERE id=%s",
+                           (new_filename, centre_id))
+
+    db.get_db().commit()
     flash("Centre updated successfully.", "success")
     return redirect(url_for("search", name=form["osm_name"]))
