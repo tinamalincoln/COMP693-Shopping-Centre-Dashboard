@@ -201,16 +201,7 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# Marimo
-marimo/_static/
-marimo/_lsp/
-__marimo__/
 
 # Connect to mySQL
 app/connect.py
 *.db
-
-# Ignore uploads folder
-# /static/uploads/
-# /static/img/
-# /app/static/uploads
