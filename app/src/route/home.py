@@ -39,24 +39,39 @@ def search():
             SELECT 
                 sc.id, sc.name, sc.osm_name, sc.image_filename, sc.location, sc.total_retail_space, sc.date_opened, sc.site_area_ha, 
                 sc.covered_parking_num, sc.uncovered_parking_num, sc.redevelopments, sc.levels,
-                c.name AS classification, t.name AS centre_type
+                c.name AS classification, t.name AS centre_type, ci.name AS city_name
             FROM shopping_centre sc
             LEFT JOIN classification c ON sc.classification_id = c.id
             LEFT JOIN centre_type t ON sc.centre_type_id = t.id
+            LEFT JOIN city ci ON sc.city_id = ci.id
             WHERE sc.osm_name = %s
         """, (centre_name,))
         centre = cursor.fetchone()
 
     if not centre:
         return render_template("search.html", error="Shopping centre not found.")
-
+    
     query = centre['osm_name']
+    city_name = centre['city_name']
+    
+    # Handle special case where the centre is outside Christchurch
+    
+    if query == "Woolworths, 121 Carters Road":
+        location_query = query + ", Amberley, New Zealand"
+    elif query == "Rolleston Square":
+        location_query = query + ", Rolleston, New Zealand"
+    elif city_name:
+        location_query = query + ", " + city_name + ", New Zealand"
+    else:
+        location_query = query + ", Christchurch, New Zealand"
+    
     url = "https://nominatim.openstreetmap.org/search"
     params = {
-        "q": query + ", Christchurch, New Zealand",
+        "q": location_query,
         "format": "json",
         "limit": 1
     }
+
 
     response = requests.get(url, headers={"User-Agent": "shopping-centre-dashboard"}, params=params)
 
@@ -84,6 +99,16 @@ def edit_centre(centre_id):
     form = request.form
     image_file = request.files.get("image")
 
+    # Convert empty fields to None
+    date_opened = form["date_opened"] or None
+    site_area_ha = form["site_area_ha"] or None
+    covered_parking = form["covered_parking_num"] or None
+    uncovered_parking = form["uncovered_parking_num"] or None
+    redevelopments = form["redevelopments"] or None
+    levels = form["levels"] or None
+    total_space = form["total_retail_space"] or None
+
+
     # ✅ Always resolve full path from app root
     upload_folder = os.path.join(app.root_path, "static", "uploads", "centre_photo")
     os.makedirs(upload_folder, exist_ok=True)
@@ -97,9 +122,8 @@ def edit_centre(centre_id):
                 levels=%s, total_retail_space=%s
             WHERE id=%s
         """, (
-            form["name"], form["osm_name"], form["location"], form["date_opened"],
-            form["site_area_ha"], form["covered_parking_num"], form["uncovered_parking_num"],
-            form["redevelopments"], form["levels"], form["total_retail_space"], centre_id
+            form["name"], form["osm_name"], form["location"], date_opened, site_area_ha,
+            covered_parking, uncovered_parking, redevelopments, levels, total_space, centre_id
         ))
 
         if image_file and image_file.filename != "":
