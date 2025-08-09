@@ -1,14 +1,13 @@
 # app/src/model/image.py
-
-from app import app, db
 import os
+from app import app, db
 from werkzeug.utils import secure_filename
 
+ALLOWED_EXTS = {"jpg", "jpeg", "png", "webp"}
 
 def upload_dir() -> str:
     return os.path.join(app.root_path, "static", "uploads", "centre_photo")
 
-ALLOWED_EXTS = {"jpg", "jpeg", "png", "webp"}
 def save_or_replace_image(centre_id: int, new_name: str, file_storage) -> str | None:
     """Save a new image, delete old one if different, return new filename or None."""
     if not file_storage or not file_storage.filename:
