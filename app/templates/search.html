@@ -102,18 +102,58 @@
       <i class="fas fa-users"></i> View Population Reach on ORS Map
     </a>
   </div>
-
-  <!-- Edit Centre Button -->
-   <div class="text-end">
-    <button class="btn btn-warning" data-bs-toggle="offcanvas" data-bs-target="#editCentreCanvas">
-      <i class="fas fa-edit"></i> Edit Centre
+  
+  <!-- Edit & Delete Buttons Row -->
+   <div class="d-flex justify-content-end gap-2 mt-2">
+    <!-- Edit Centre Button -->
+     <button class="btn btn-outline-warning" data-bs-toggle="offcanvas" data-bs-target="#editCentreCanvas">
+      <i class="fas fa-edit"></i> Edit
+    </button>
+    
+    <!-- Delete Centre Button -->
+     <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+      <i class="fas fa-trash"></i> Delete
     </button>
   </div>
+
 </div>
+
+
 
   <!-- Map -->
   <div id="map"></div>
 </div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-danger">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteLabel">Delete “{{ centre.name }}”?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-0">
+          This will permanently remove the centre and its image. This action cannot be undone.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+
+        <form action="{{ url_for('delete_centre', centre_id=centre['id']) }}" method="POST">
+          <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Yes, delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- Offcanvas Edit Form -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="editCentreCanvas" aria-labelledby="editCentreLabel">
@@ -207,6 +247,13 @@
    </script>
   </div>
 </div>
+
+
+
+
+
+
+
 
 <!-- Map Script -->
 <script>
