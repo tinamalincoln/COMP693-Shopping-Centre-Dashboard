@@ -1,0 +1,36 @@
+/* Shopping Centre Dashboard - Home Page Styles */
+
+.full-height-container {
+    display: flex;
+    height: calc(100vh - 120px); /* navbar + footer adjustment */
+}
+
+.list-panel {
+    width: 33.33%;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border-right: 1px solid #ccc;
+}
+
+#map {
+    width: 66.66%;
+    height: 100%;
+}
+
+.centre-link {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .full-height-container {
+        flex-direction: column;
+        height: auto;
+    }
+    .list-panel, #map {
+        width: 100%;
+        height: 400px;
+    }
+}
