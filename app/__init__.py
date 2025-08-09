@@ -31,3 +31,4 @@ def inject_current_year():
 
 # Include all modules that define our Flask route-handling functions.
 from app.src.route import home
+from app.src.route import centre
