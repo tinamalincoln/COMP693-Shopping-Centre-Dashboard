@@ -93,7 +93,7 @@ def search():
     )
 
 
-
+# Edit a shopping centre
 @app.route("/edit/<int:centre_id>", methods=["POST"])
 def edit_centre(centre_id):
     form = request.form
@@ -109,7 +109,7 @@ def edit_centre(centre_id):
     total_space = form["total_retail_space"] or None
 
 
-    # ✅ Always resolve full path from app root
+    # Always resolve full path from app root
     upload_folder = os.path.join(app.root_path, "static", "uploads", "centre_photo")
     os.makedirs(upload_folder, exist_ok=True)
 
@@ -152,3 +152,41 @@ def edit_centre(centre_id):
     db.get_db().commit()
     flash("Centre updated successfully.", "success")
     return redirect(url_for("search", name=form["osm_name"]))
+
+
+
+# Delete a shopping centre
+@app.route("/delete/<int:centre_id>", methods=["POST"])
+def delete_centre(centre_id):
+    # Resolve your upload folder safely (so we don’t create a rogue /static)
+    upload_folder = os.path.join(app.root_path, "static", "uploads", "centre_photo")
+
+    with db.get_cursor() as cursor:
+        # Grab what we need before deleting (image + name for message)
+        cursor.execute("""
+            SELECT name, osm_name, image_filename
+            FROM shopping_centre
+            WHERE id = %s
+        """, (centre_id,))
+        centre = cursor.fetchone()
+
+        if not centre:
+            flash("Centre not found.", "danger")
+            return redirect(url_for("home"))
+
+        # Delete image on disk if present
+        img = centre.get("image_filename")
+        if img:
+            old_path = os.path.join(upload_folder, img)
+            if os.path.isfile(old_path):
+                try:
+                    os.remove(old_path)
+                except Exception as e:
+                    app.logger.warning(f"Could not delete image file {old_path}: {e}")
+
+        # Delete the row
+        cursor.execute("DELETE FROM shopping_centre WHERE id = %s", (centre_id,))
+
+    db.get_db().commit()
+    flash(f"Deleted centre: {centre['name']}", "success")
+    return redirect(url_for("home"))
