@@ -4,7 +4,8 @@
    Created By: Tina Ma
    Description: Create the shopping centre database and related tables
    Created Date: 28/07/2025
-   Version: 1.0
+   Updated Date: 09/08/2025
+   Version: 1.1
 */
 
 -- Create a new database
@@ -43,15 +44,18 @@ CREATE TABLE shopping_centre (
   location           TEXT            DEFAULT NULL,
   date_opened        DATE            DEFAULT NULL,
   site_area_ha       DECIMAL(10,4)   DEFAULT NULL,
-  covered_parking_num  INT           DEFAULT NULL,
-  uncovered_parking_num INT          DEFAULT NULL,
+  covered_parking_num    INT UNSIGNED DEFAULT 0,
+  uncovered_parking_num  INT UNSIGNED DEFAULT 0,
   redevelopments     TEXT            DEFAULT NULL,
-  levels             INT             DEFAULT NULL,
+  levels             TINYINT UNSIGNED DEFAULT NULL,
   total_retail_space DECIMAL(12,2)   DEFAULT NULL,
+  created_at             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_city       FOREIGN KEY (city_id)           REFERENCES city(id)           ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT fk_class      FOREIGN KEY (classification_id) REFERENCES classification(id) ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fk_type       FOREIGN KEY (centre_type_id)    REFERENCES centre_type(id)    ON UPDATE CASCADE ON DELETE SET NULL
+  CONSTRAINT fk_type       FOREIGN KEY (centre_type_id)    REFERENCES centre_type(id)    ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT uq_city_name UNIQUE (city_id, name)
 );
 
 
