@@ -49,6 +49,8 @@ CREATE TABLE shopping_centre (
   redevelopments     TEXT            DEFAULT NULL,
   levels             TINYINT UNSIGNED DEFAULT NULL,
   total_retail_space DECIMAL(12,2)   DEFAULT NULL,
+  lat                    DECIMAL(9,6)  DEFAULT NULL,
+  lon                    DECIMAL(9,6)  DEFAULT NULL,
   created_at             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
