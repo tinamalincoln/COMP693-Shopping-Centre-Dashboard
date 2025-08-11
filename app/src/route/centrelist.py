@@ -13,5 +13,5 @@ ORS_API_KEY = os.getenv("ORS_API_KEY")
 def centrelist():
     centres = list_centres()
     default_lat, default_lon = -43.5321, 172.6362
-    return render_template("home.html", centres=centres, lat=default_lat, lon=default_lon)
+    return render_template("centrelist.html", centres=centres, lat=default_lat, lon=default_lon)
 
