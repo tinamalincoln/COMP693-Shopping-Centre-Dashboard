@@ -45,7 +45,7 @@ INSERT INTO shopping_centre (
   (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'Avonhead Shopping Centre',
   'Avonhead Shopping Mall',
-  'Avonhead_1.jpg',
+  'AvonheadShoppingCentre_1.jpg',
   'Corner Merrin Street and Withells Road, Avonhead, Christchurch',
   '1993-11-01', 0.9211,
   0, 556, '', 1, 3689.55
