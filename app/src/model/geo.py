@@ -12,11 +12,26 @@ def geocode_if_needed(centre: dict):
         return float(centre['lat']), float(centre['lon'])
 
     query = centre['osm_name']
-    city_name = centre.get('city_name') or 'Christchurch'
-    location_query = f"{query}, {city_name}, New Zealand"
-
+    city_name = centre['city_name']
+    
+    # Handle special case where the centre is outside Christchurch
+    
+    if query == "Woolworths, 121 Carters Road":
+        location_query = query + ", Amberley, New Zealand"
+    elif query == "Rolleston Square":
+        location_query = query + ", Rolleston, New Zealand"
+    elif city_name:
+        location_query = query + ", " + city_name + ", New Zealand"
+    else:
+        location_query = query + ", Christchurch, New Zealand"
+    
     url = "https://nominatim.openstreetmap.org/search"
-    params = {"q": location_query, "format": "json", "limit": 1}
+    params = {
+        "q": location_query,
+        "format": "json",
+        "limit": 1
+    }
+
     resp = requests.get(url, headers={"User-Agent": "shopping-centre-dashboard"}, params=params, timeout=15)
 
     if resp.status_code == 200 and resp.json():
