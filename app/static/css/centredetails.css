@@ -1,0 +1,31 @@
+/* Centre details page */
+
+.full-height-container {
+  display: flex;
+  height: calc(100vh - 120px);
+}
+
+.info-panel {
+  width: 33.33%;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+  border-right: 1px solid #ddd;
+}
+
+#map {
+  width: 66.66%;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .full-height-container {
+    flex-direction: column;
+    height: auto;
+  }
+  .info-panel,
+  #map {
+    width: 100%;
+    height: 400px;
+  }
+}
