@@ -28,6 +28,10 @@ db.init_db(app, connect.dbuser, connect.dbpass, connect.dbhost, connect.dbname)
 def inject_current_year():
     return {'current_year': datetime.now().year}
 
+@app.context_processor
+def inject_datetime():
+    return {"datetime": datetime}
+
 
 # Include all modules that define our Flask route-handling functions.
 from app.src.route import centrelist
