@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}Shopping Centre Dashboard{% endblock %}
+
+{% block content %}
+<!-- Page-specific CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/centrelist.css') }}">
+
+<!-- Pass lat/lon from Flask to JS -->
+<script>
+    const lat = '{{ lat }}';
+    const lon = '{{ lon }}';
+</script>
+
+<div class="full-height-container">
+  <!-- Shopping centre list -->
+  <div class="list-panel">
+    <h4><i class="fas fa-store me-2"></i>Shopping Centres</h4>
+    <form method="get" action="{{ url_for('centredetails') }}" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="name" class="form-control" list="centreSuggestions" placeholder="Search by Shopping Centre Name" required>
+            <datalist id="centreSuggestions">
+                {% for centre in centres %}
+                <option value="{{ centre.osm_name }}">{{ centre.name }}</option>
+                {% endfor %}
+            </datalist>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    {% for centre in centres %}
+      <a class="centre-link" href="{{ url_for('centredetails') }}?name={{ centre.osm_name }}">
+        {{ centre.name }} 
+      </a>
+    {% else %}
+      <p>No centres found.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Map -->
+  <div id="map"></div>
+</div>
+
+<!-- Page-specific JS -->
+<script src="{{ url_for('static', filename='js/centrelist.js') }}"></script>
+{% endblock %}
