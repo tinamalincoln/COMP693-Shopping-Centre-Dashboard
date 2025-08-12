@@ -36,3 +36,4 @@ def inject_datetime():
 # Include all modules that define our Flask route-handling functions.
 from app.src.route import centrelist
 from app.src.route import centredetails
+from app.src.route import centrecreate
