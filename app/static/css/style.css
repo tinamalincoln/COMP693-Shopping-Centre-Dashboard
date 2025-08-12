@@ -1,0 +1,7 @@
+/* Let the brand wrap instead of clipping */
+.navbar-brand {
+  white-space: normal !important;
+  min-width: 0;              /* so text-truncate can actually truncate */
+  line-height: 1.2;
+}
+
