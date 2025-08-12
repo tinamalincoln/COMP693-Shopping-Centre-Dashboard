@@ -1,61 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Shopping Centre Map{% endblock %}</title>
+  <meta charset="UTF-8">
+  <title>{% block title %}Shopping Centre Map{% endblock %}</title>
 
-    <!-- Zephyr theme from Bootswatch -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+  <!-- Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Optional custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.1">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootswatch Zephyr (Bootstrap CSS) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 
-    <!-- Leaflet CSS and JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
 
+  <!-- Global custom CSS (lightweight, shared) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.1">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  {% block head_extra %}{% endblock %}
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('centrelist') }}"><i class="fas fa-home me-2"></i> Interactive Shopping Centre Dashboard</a>
-        </div>
-    </nav>
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand me-2 flex-grow-1 text-truncate" href="{{ url_for('centrelist') }}">
+      <i class="fas fa-home me-2"></i>
+      <!-- Show short title on XS, full title on SM+ -->
+      <span class="d-inline d-sm-none">Shopping Centre Dashboard</span>
+      <span class="d-none d-sm-inline">Interactive Shopping Centre Dashboard</span>
+    </a>
 
+    <!-- Mobile toggler sticks to the right -->
+    <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="mainNav">
+      <ul class="navbar-nav">
+        <!-- Optional nav items -->
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+  <!-- Main content wrapper -->
+  <main class="container my-4">
     <!-- Flash Messages -->
-     {% with messages = get_flashed_messages(with_categories=true) %}
-         {% if messages %}
-             {% for category, message in messages %}
-             <div class="alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
-                <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            {% endfor %}
-        {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
     {% endwith %}
 
-    <!-- Page content -->
-    <main class="container my-4">
-        {% block content %}{% endblock %}
-    </main>
+    {% block content %}{% endblock %}
+  </main>
 
-    <!-- Optional JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3 mt-5">
+    <div class="container">
+      <p class="mb-0">&copy; {{ current_year }} Shopping Centre Map | Built with Flask & Bootstrap</p>
+    </div>
+  </footer>
 
+  <!-- Bootstrap JS bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-3 mt-5">
-  <div class="container">
-    <p class="mb-0">&copy; {{ current_year }} Shopping Centre Map | Built with Flask & Bootstrap</p>
-  </div>
-</footer>
+  <!-- Optional global JS -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
+  {% block scripts %}{% endblock %}
 </body>
 </html>
