@@ -1,0 +1,227 @@
+{% extends "layout.html" %}
+{% block title %}Create New Centre{% endblock %}
+
+{% block head_extra %}
+  <!-- Reuse the same CSS as centredetails to keep design consistent -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/centredetails.css') }}">
+{% endblock %}
+
+{% block content %}
+<script>
+  /* Default map center (Christchurch CBD) for the create page */
+  window.NEW_CENTRE = {
+    lat: -43.5321,
+    lon: 172.6362
+  };
+</script>
+
+<div class="full-height-container">
+  <!-- Left: Grouped form in an info-style panel (matching centredetails) -->
+  <div class="info-panel">
+    <h4 class="mb-3"><i class="fas fa-plus-circle"></i> Create New Centre</h4>
+
+    <form method="POST" action="{{ url_for('create_centre') }}" enctype="multipart/form-data" id="create-form">
+      {# CSRF (works if you use Flask-WTF) #}
+      {% if csrf_token is defined %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% endif %}
+      {# Or if you pass a variable "csrf_token" yourself #}
+      {% if csrf_token and csrf_token is string %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      {% endif %}
+
+      <!-- General Information -->
+      <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+          <i class="fas fa-info-circle"></i> General Information
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label"><i class="fas fa-store"></i><strong> Name:</strong><span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label"><i class="fas fa-store"></i><strong> OSM Name:</strong></label>
+            <input type="text" name="osm_name" class="form-control" placeholder="Exact OSM match if possible">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label"><i class="fas fa-map-marker-alt me-2"></i><strong>Location:</strong></label>
+            <input type="text" name="location" class="form-control" placeholder="Street, suburb">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">City <span class="text-danger">*</span></label>
+               <select class="form-select" name="city_id" required>
+                 {% for c in cities %}
+                   <option value="{{ c.id }}">{{ c.name }}</option>
+                 {% endfor %}
+               </select>
+          </div>
+
+          <div class="mb-3">
+              <label class="form-label">Classification</label>
+              <select class="form-select" name="classification_id">
+                <option value="">-- None --</option>
+                {% for cl in classes %}
+                  <option value="{{ cl.id }}">{{ cl.name }}</option>
+                {% endfor %}
+              </select>
+          </div>
+
+          <div class="mb-3">
+              <label class="form-label">Centre Type</label>
+              <select class="form-select" name="centre_type_id">
+                <option value="">-- None --</option>
+                {% for t in types %}
+                  <option value="{{ t.id }}">{{ t.name }}</option>
+                {% endfor %}
+              </select>
+           </div>
+
+
+          <div class="mt-3">
+            <label class="form-label">Date Opened</label>
+            {% set today = datetime.utcnow().date() %}
+            <input type="date" name="date_opened" class="form-control" max="{{ today }}">
+            <div class="form-text">Cannot be in the future.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Size & Facilities -->
+      <div class="card mb-3">
+        <div class="card-header bg-success text-white">
+          <i class="fas fa-ruler-combined"></i> Size & Facilities
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Site Area (ha)</label>
+              <input type="number" name="site_area_ha" class="form-control" step="0.0001" min="0">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Levels</label>
+              <input type="number" name="levels" class="form-control" step="1" min="0">
+            </div>
+            <div class="card-body">
+              <label class="form-label">Total Retail Space (m²)</label>
+              <input type="number" name="total_retail_space" class="form-control" step="0.01" min="0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parking & Development -->
+      <div class="card mb-3">
+        <div class="card-header bg-info text-white">
+          <i class="fas fa-parking"></i> Parking & Development
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Covered Parking</label>
+              <input type="number" name="covered_parking_num" class="form-control" step="1" min="0" value="0">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Uncovered Parking</label>
+              <input type="number" name="uncovered_parking_num" class="form-control" step="1" min="0" value="0">
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <label class="form-label">Redevelopments</label>
+            <textarea name="redevelopments" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="card mb-3">
+        <div class="card-header bg-dark text-white">
+          <i class="fas fa-image"></i> Centre Image
+        </div>
+        <div class="card-body">
+          <input type="file" name="image" class="form-control">
+          <div class="form-text">Optional. JPG/PNG recommended.</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex justify-content-end gap-2">
+        <a href="{{ url_for('centrelist') }}" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i> Create Centre
+        </button>
+      </div>
+    </form>
+
+    <!-- Optional: quick map preview control -->
+    <div class="text-center my-3">
+      <button id="preview-map" class="btn btn-outline-primary">
+        <i class="fas fa-map-marker-alt"></i> Preview on Map
+      </button>
+    </div>
+  </div>
+
+  <!-- Right: Map (same placement/size as details page) -->
+  <div id="map"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    // Simple map init (same sizing as centredetails)
+    document.addEventListener('DOMContentLoaded', function () {
+      var base = window.NEW_CENTRE || {};
+      var lat = (typeof base.lat === 'number') ? base.lat : -43.5321;
+      var lon = (typeof base.lon === 'number') ? base.lon : 172.6362;
+
+      var map = L.map('map').setView([lat, lon], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+      }).addTo(map);
+      var marker = L.marker([lat, lon]).addTo(map).bindPopup('New Centre').openPopup();
+
+      // Optional: Preview geocode using OSM name + city
+      var btn = document.getElementById('preview-map');
+      if (btn) {
+        btn.addEventListener('click', async function (e) {
+          e.preventDefault();
+          var form = document.getElementById('create-form');
+          var osm = form.querySelector('input[name="osm_name"]').value.trim();
+          var citySel = form.querySelector('select[name="city_id"]');
+          var cityText = citySel ? (citySel.options[citySel.selectedIndex].text || '') : '';
+          var q = (osm || '').trim();
+          if (!q) {
+            alert('Enter an OSM Name first to preview.');
+            return;
+          }
+          var query = encodeURIComponent(q + (cityText ? (', ' + cityText + ', New Zealand') : ''));
+          try {
+            const resp = await fetch('https://nominatim.openstreetmap.org/search?q=' + query + '&format=json&limit=1', {
+              headers: { 'User-Agent': 'shopping-centre-dashboard' }
+            });
+            const data = await resp.json();
+            if (Array.isArray(data) && data.length) {
+              var p = data[0];
+              var nlat = parseFloat(p.lat), nlon = parseFloat(p.lon);
+              if (Number.isFinite(nlat) && Number.isFinite(nlon)) {
+                map.setView([nlat, nlon], 16);
+                marker.setLatLng([nlat, nlon]).bindPopup(osm || 'New Centre').openPopup();
+              }
+            } else {
+              alert('No result from geocoder. Try refining OSM name.');
+            }
+          } catch (err) {
+            console.warn(err);
+            alert('Geocoding failed. Please try again.');
+          }
+        });
+      }
+    });
+  </script>
+{% endblock %}
