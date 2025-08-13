@@ -37,12 +37,12 @@
         </div>
         <div class="card-body">
           <div class="mb-3">
-            <label class="form-label"><i class="fas fa-store"></i><strong> Name:</strong><span class="text-danger">*</span></label>
+            <label class="form-label"><i class="fas fa-store me-2"></i><strong>Name:</strong><span class="text-danger">*</span></label>
             <input type="text" name="name" class="form-control" required>
           </div>
 
           <div class="mb-3">
-            <label class="form-label"><i class="fas fa-store"></i><strong> OSM Name:</strong></label>
+            <label class="form-label"><i class="fas fa-store me-2"></i><strong>OSM Name:</strong></label>
             <input type="text" name="osm_name" class="form-control" placeholder="Exact OSM match if possible">
           </div>
 
@@ -52,7 +52,7 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">City <span class="text-danger">*</span></label>
+            <label class="form-label"><i class="fas fa-map-marker-alt me-2"></i><strong>City:</strong> <span class="text-danger">*</span></label>
                <select class="form-select" name="city_id" required>
                  {% for c in cities %}
                    <option value="{{ c.id }}">{{ c.name }}</option>
@@ -61,7 +61,7 @@
           </div>
 
           <div class="mb-3">
-              <label class="form-label">Classification</label>
+              <label class="form-label"><i class="fas fa-tags me-2"></i><strong>Classification:</strong></label>
               <select class="form-select" name="classification_id">
                 <option value="">-- None --</option>
                 {% for cl in classes %}
@@ -71,7 +71,7 @@
           </div>
 
           <div class="mb-3">
-              <label class="form-label">Centre Type</label>
+              <label class="form-label"><i class="fas fa-building me-2"></i><strong>Centre Type:</strong></label>
               <select class="form-select" name="centre_type_id">
                 <option value="">-- None --</option>
                 {% for t in types %}
@@ -82,7 +82,7 @@
 
 
           <div class="mt-3">
-            <label class="form-label">Date Opened</label>
+            <label class="form-label"><i class="fas fa-calendar-alt me-2"></i><strong>Date Opened:</strong></label>
             {% set today = datetime.utcnow().date() %}
             <input type="date" name="date_opened" class="form-control" max="{{ today }}">
             <div class="form-text">Cannot be in the future.</div>
@@ -98,15 +98,15 @@
         <div class="card-body">
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label">Site Area (ha)</label>
+              <label class="form-label"><i class="fas fa-vector-square me-2"></i><strong>Site Area (ha):</strong></label>
               <input type="number" name="site_area_ha" class="form-control" step="0.0001" min="0">
             </div>
             <div class="col-md-6">
-              <label class="form-label">Levels</label>
+              <label class="form-label"><i class="fas fa-layer-group me-2"></i><strong>Levels:</strong></label>
               <input type="number" name="levels" class="form-control" step="1" min="0">
             </div>
-            <div class="card-body">
-              <label class="form-label">Total Retail Space (m²)</label>
+            <div class="col-md-8">
+              <label class="form-label"><i class="fas fa-expand-arrows-alt me-2"></i><strong>Total Retail Space (m²):</strong></label>
               <input type="number" name="total_retail_space" class="form-control" step="0.01" min="0">
             </div>
           </div>
@@ -121,17 +121,17 @@
         <div class="card-body">
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label">Covered Parking</label>
+              <label class="form-label"><i class="fas fa-car me-2"></i><strong>Covered Parking:</strong></label>
               <input type="number" name="covered_parking_num" class="form-control" step="1" min="0" value="0">
             </div>
             <div class="col-md-6">
-              <label class="form-label">Uncovered Parking</label>
+              <label class="form-label"><i class="fas fa-car-side me-2"></i><strong>Uncovered Parking:</strong></label>
               <input type="number" name="uncovered_parking_num" class="form-control" step="1" min="0" value="0">
             </div>
           </div>
 
           <div class="mt-3">
-            <label class="form-label">Redevelopments</label>
+            <label class="form-label"><i class="fas fa-tools me-2"></i><strong>Redevelopments:</strong></label>
             <textarea name="redevelopments" class="form-control" rows="3"></textarea>
           </div>
         </div>
@@ -148,21 +148,21 @@
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="d-flex justify-content-end gap-2">
-        <a href="{{ url_for('centrelist') }}" class="btn btn-outline-secondary">Cancel</a>
-        <button type="submit" class="btn btn-primary">
-          <i class="fas fa-save me-1"></i> Create Centre
-        </button>
-      </div>
-    </form>
-
-    <!-- Optional: quick map preview control -->
+    <!-- Quick map preview control -->
     <div class="text-center my-3">
       <button id="preview-map" class="btn btn-outline-primary">
         <i class="fas fa-map-marker-alt"></i> Preview on Map
       </button>
     </div>
+
+      <!-- Actions -->
+      <div class="d-flex justify-content-end gap-2">
+        <a href="{{ url_for('centrelist') }}" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-outline-primary">
+          <i class="fas fa-save me-1"></i> Create Centre
+        </button>
+      </div>
+    </form>
   </div>
 
   <!-- Right: Map (same placement/size as details page) -->
