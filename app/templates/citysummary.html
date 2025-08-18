@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block title %}City Summary{% endblock %}
+
+{% set active_page = 'city_summary' %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{{ url_for('city_summary') }}"><i class="fas fa-home"></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">City Summary</li>
+  </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mb-4">
+   <div class="col-lg-8 text-center">
+      <h2 class="display-5 mb-3"><i class="fas fa-city me-2"></i>City Summary</h2>
+        <p class="lead text-muted">List of cities and number of shopping centres</p>
+        <hr class="border-primary mx-auto" style="width: 100px;">
+    </div>
+</div>
+
+<div class="row g-4">
+  {% for city in cities %}
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+    <a href="{{ url_for('centrelist', city=city.city_name) }}" class="text-decoration-none">
+      <div class="card shadow-sm h-100 border-primary">
+        <img
+          src="{{ city.image_url }}"
+          class="card-img-top"
+          alt="{{ city.city_name }} image"
+          onerror="this.onerror=null;this.src='{{ city.fallback_url }}';"
+        >
+        <div class="card-body text-center">
+          <h5 class="card-title text-primary">
+            <i class="fas fa-city me-2"></i>{{ city.city_name }}
+          </h5>
+          <p class="card-text fs-4 fw-bold text-dark">{{ city.mall_count }}</p>
+          <small class="text-muted">Shopping Centres</small>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <div class="alert alert-warning text-center">
+      No cities found.
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
