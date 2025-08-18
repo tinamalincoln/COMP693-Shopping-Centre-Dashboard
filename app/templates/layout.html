@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}Shopping Centre Map{% endblock %}</title>
+  <title>{% block title %}Interactive Shopping Centre Dashboard{% endblock %}</title>
 
   <!-- Responsive -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,7 +25,7 @@
   <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container-fluid">
-    <a class="navbar-brand me-2 flex-grow-1 text-truncate" href="{{ url_for('centrelist') }}">
+    <a class="navbar-brand me-2 flex-grow-1 text-truncate" href="{{ url_for('city_summary') }}">
       <i class="fas fa-home me-2"></i>
       <!-- Show short title on XS, full title on SM+ -->
       <span class="d-inline d-sm-none">Shopping Centre Dashboard</span>
@@ -38,19 +38,29 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse justify-content-end" id="mainNav">
-      <ul class="navbar-nav">
-        <!-- Optional nav items -->
-         <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('new_centre') }}">
-                <i class="fas fa-plus-circle me-1"></i> New Centre
-            </a>
+    <!-- Optional right-side nav -->
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('city_summary') }}"><i class="fas fa-city me-1"></i> City Summary</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('centrelist') }}"><i class="fas fa-store me-1"></i> Centres</a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 
+<!-- Breadcrumbs -->
+<div class="container mt-3">
+  {% block breadcrumbs %}{% endblock %}
+</div>
+
+<!-- Page content -->
+<main class="container my-4">
+  {% block content %}{% endblock %}
+</main>
 
   <!-- Main content wrapper -->
   <main class="container my-4">
@@ -69,7 +79,6 @@
       {% endif %}
     {% endwith %}
 
-    {% block content %}{% endblock %}
   </main>
 
   <!-- Footer -->
