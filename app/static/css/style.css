@@ -1,3 +1,5 @@
+/* app/static/css/style.css */
+
 /* Let the brand wrap instead of clipping */
 .navbar-brand {
   white-space: normal !important;
@@ -5,3 +7,8 @@
   line-height: 1.2;
 }
 
+
+.breadcrumb {
+  background: transparent;
+  margin-bottom: 0.25rem;
+}
