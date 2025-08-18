@@ -37,3 +37,4 @@ def inject_datetime():
 from app.src.route import centrelist
 from app.src.route import centredetails
 from app.src.route import centrecreate
+from app.src.route import citysummary
