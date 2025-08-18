@@ -42,7 +42,7 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label"><i class="fas fa-store me-2"></i><strong>OSM Name:</strong></label>
+            <label class="form-label"><i class="fas fa-edit me-2"></i><strong>OSM Name:</strong></label>
             <input type="text" name="osm_name" class="form-control" placeholder="Exact OSM match if possible">
           </div>
 
@@ -52,13 +52,25 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label"><i class="fas fa-map-marker-alt me-2"></i><strong>City:</strong> <span class="text-danger">*</span></label>
-               <select class="form-select" name="city_id" required>
-                 {% for c in cities %}
-                   <option value="{{ c.id }}">{{ c.name }}</option>
-                 {% endfor %}
-               </select>
-          </div>
+            <label for="cityInput" class="form-label"><i class="fas fa-city me-2"></i><strong>City:</strong></label>
+            <input list="cityOptions" name="city_name" id="cityInput" class="form-control" placeholder="Select or type a city" required>
+            
+            <datalist id="cityOptions">
+                {% for city in cities %}
+                <option value="{{ city.name }}"></option>
+                {% endfor %}
+            </datalist>
+            
+            <small class="text-muted">
+                Start typing to search existing cities, or enter a new city name.
+            </small>
+        </div>
+
+
+
+
+
+
 
           <div class="mb-3">
               <label class="form-label"><i class="fas fa-tags me-2"></i><strong>Classification:</strong></label>
@@ -157,8 +169,8 @@
 
       <!-- Actions -->
       <div class="d-flex justify-content-end gap-2">
-        <a href="{{ url_for('centrelist') }}" class="btn btn-outline-secondary">Cancel</a>
-        <button type="submit" class="btn btn-outline-primary">
+        <a href="{{ url_for('city_summary') }}" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-outline-success">
           <i class="fas fa-save me-1"></i> Create Centre
         </button>
       </div>
