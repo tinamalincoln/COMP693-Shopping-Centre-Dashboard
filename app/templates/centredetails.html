@@ -2,6 +2,25 @@
 
 {% block title %}Shopping Centre Details{% endblock %}
 
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{{ url_for('city_summary') }}"><i class="fas fa-home"></i></a>
+    </li>
+    <li class="breadcrumb-item">
+      <a href="{{ url_for('city_summary') }}">City Summary</a>
+    </li>
+    {% if centre.city_name %}
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('centrelist', city=centre.city_name) }}">{{ centre.city_name }}</a>
+      </li>
+    {% endif %}
+    <li class="breadcrumb-item active" aria-current="page">{{ centre.name }}</li>
+  </ol>
+</nav>
+{% endblock %}
+
 {% block content %}
 <!-- Page-specific CSS -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/centredetails.css') }}">
