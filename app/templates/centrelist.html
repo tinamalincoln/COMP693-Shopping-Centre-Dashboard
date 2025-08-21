@@ -10,11 +10,7 @@
     <li class="breadcrumb-item">
       <a href="{{ url_for('city_summary') }}">City Summary</a>
     </li>
-    {% if city %}
-      <li class="breadcrumb-item active" aria-current="page">{{ city }}</li>
-    {% else %}
-      <li class="breadcrumb-item active" aria-current="page">Centres</li>
-    {% endif %}
+    <li class="breadcrumb-item active" aria-current="page">{{ current_city }}</li>
   </ol>
 </nav>
 {% endblock %}
