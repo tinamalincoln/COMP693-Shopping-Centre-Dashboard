@@ -38,17 +38,33 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Optional right-side nav -->
-    <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('city_summary') }}"><i class="fas fa-city me-1"></i> City Summary</a>
+<!-- Optional right-side nav -->
+<div class="collapse navbar-collapse" id="mainNav">
+  <ul class="navbar-nav ms-auto">
+
+    <!-- Dropdown -->
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navDropdown" role="button"
+         data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bars me-1"></i> Menu
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navDropdown">
+        <li>
+          <a class="dropdown-item" href="{{ url_for('city_summary') }}">
+            <i class="fas fa-city me-1"></i> City Summary
+          </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('centrelist') }}"><i class="fas fa-store me-1"></i> Centres</a>
+        <li>
+          <a class="dropdown-item" href="{{ url_for('create_centre') }}">
+            <i class="fas fa-store me-1"></i> New Centre
+          </a>
         </li>
       </ul>
-    </div>
+    </li>
+
+  </ul>
+</div>
+
   </div>
 </nav>
 
