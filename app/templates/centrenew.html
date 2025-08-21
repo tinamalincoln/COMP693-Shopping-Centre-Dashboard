@@ -21,7 +21,7 @@
     <h4 class="mb-3"><i class="fas fa-plus-circle"></i> Create New Centre</h4>
 
     <form method="POST" action="{{ url_for('create_centre') }}" enctype="multipart/form-data" id="create-form">
-      {# CSRF (works if you use Flask-WTF) #}
+      {# CSRF (works if use Flask-WTF) #}
       {% if csrf_token is defined %}
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       {% endif %}
@@ -42,8 +42,8 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label"><i class="fas fa-edit me-2"></i><strong>OSM Name:</strong></label>
-            <input type="text" name="osm_name" class="form-control" placeholder="Exact OSM match if possible">
+            <label class="form-label"><i class="fas fa-edit me-2"></i><strong>OSM Name:</strong><span class="text-danger">*</span></label>
+            <input type="text" name="osm_name" class="form-control" placeholder="Exact OSM match if possible" required>
           </div>
 
           <div class="mb-3">
