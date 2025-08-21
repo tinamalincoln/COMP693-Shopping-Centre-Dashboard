@@ -20,53 +20,56 @@
 {% endblock %}
 
 {% block content %}
-<!-- Page-specific CSS -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/centrelist.css') }}">
-
-<!-- Pass lat/lon from Flask to JS -->
-<script>
-    const lat = '{{ lat }}';
-    const lon = '{{ lon }}';
-</script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/centrelist.css') }}?v=1.0">
 
 <div class="full-height-container">
-  <!-- Shopping centre list -->
+  <!-- Left: list -->
   <div class="list-panel">
-    <h4><i class="fas fa-store me-2"></i>{% if city %}{{ city }} Shopping Centres{% else %}Shopping Centres{% endif %}</h4>
-    <form method="get" action="{{ url_for('centredetails') }}" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="name" class="form-control" list="centreSuggestions" placeholder="Search by Shopping Centre Name" required>
-            <datalist id="centreSuggestions">
-                {% for centre in centres %}
-                <option value="{{ centre.osm_name }}">{{ centre.name }}</option>
-                {% endfor %}
-            </datalist>
-            <button type="submit" class="btn btn-primary">Search</button>
-        </div>
-    </form>
-
-    {% for centre in centres %}
-      <a class="centre-link" href="{{ url_for('centredetails') }}?name={{ centre.osm_name }}">
-        {{ centre.name }} 
-      </a>
-    {% else %}
-      <p>No centres found.</p>
-    {% endfor %}
-  
-            <!-- Create New Centre Button -->
-    <div class="d-flex justify-content-end gap-2 mt-2">
-      <a href="{{ url_for('create_centre') }}" class="btn btn-outline-success">
-        <i class="fas fa-plus-circle me-2"></i>Create New Centre
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h4 class="mb-0">
+        <i class="fas fa-store me-2"></i>{{ current_city }} Shopping Centres
+      </h4>
+      <a href="{{ url_for('create_centre') }}"
+           class="btn btn-outline-success btn-sm"
+           title="Create New Centre"
+           data-bs-toggle="tooltip"
+           data-bs-placement="bottom"
+           >
+         <i class="fas fa-plus"></i>
       </a>
     </div>
-  
+
+    <!-- Search box -->
+    <form method="get" action="{{ url_for('centredetails') }}" class="mb-3">
+      <div class="input-group">
+        <input type="text" name="name" class="form-control"
+               list="centreSuggestions"
+               placeholder="Search by Shopping Centre Name" required>
+        <datalist id="centreSuggestions">
+          {% for centre in centres %}
+            <option value="{{ centre.osm_name }}">{{ centre.name }}</option>
+          {% endfor %}
+        </datalist>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </form>
+
+    <!-- Centre links -->
+    {% for centre in centres %}
+      <a class="centre-link" href="{{ url_for('centredetails') }}?name={{ centre.osm_name }}">
+        {{ centre.name }}
+      </a>
+    {% else %}
+      <p class="text-muted">No centres found for {{ current_city }}.</p>
+    {% endfor %}
   </div>
 
-
-  <!-- Map -->
-  <div id="map"></div>
+  <!-- Right: map -->
+  <div id="map"
+       data-lat="{{ lat }}"
+       data-lon="{{ lon }}">
+  </div>
 </div>
 
-<!-- Page-specific JS -->
-<script src="{{ url_for('static', filename='js/centrelist.js') }}"></script>
+<script src="{{ url_for('static', filename='js/centrelist.js') }}?v=1.0"></script>
 {% endblock %}
