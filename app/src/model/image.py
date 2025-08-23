@@ -6,7 +6,10 @@ from werkzeug.utils import secure_filename
 ALLOWED_EXTS = {"jpg", "jpeg", "png", "webp"}
 
 def upload_dir() -> str:
-    return os.path.join(app.root_path, "static", "uploads", "centre_photo")
+    """Absolute path to the centre photo upload folder."""
+    folder = os.path.join(app.root_path, "static", "uploads", "centre_photo")
+    os.makedirs(folder, exist_ok=True)
+    return folder
 
 def save_or_replace_image(centre_id: int, new_name: str, file_storage) -> str | None:
     """Save a new image, delete old one if different, return new filename or None."""
