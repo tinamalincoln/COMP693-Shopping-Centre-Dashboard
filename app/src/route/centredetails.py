@@ -99,13 +99,25 @@ def edit_centre(centre_id):
 @app.route("/delete/<int:centre_id>", methods=["POST"])
 def delete_centre(centre_id):
     folder = upload_dir()
+
     with db.get_cursor() as cursor:
-        cursor.execute("SELECT name, osm_name, image_filename FROM shopping_centre WHERE id=%s", (centre_id,))
+        # Get everything we need *including city* BEFORE deleting
+        cursor.execute("""
+            SELECT sc.name, sc.osm_name, sc.image_filename, ci.name AS city_name
+            FROM shopping_centre sc
+            JOIN city ci ON ci.id = sc.city_id
+            WHERE sc.id = %s
+        """, (centre_id,))
         centre = cursor.fetchone()
+
         if not centre:
             flash("Centre not found.", "danger")
-            return redirect(url_for("centrelist"))
+            return redirect(url_for("city_summary"))
 
+        city_name = centre["city_name"]
+        centre_name = centre["name"]
+
+        # Delete photo if present
         img = centre.get("image_filename")
         if img:
             old_path = os.path.join(folder, img)
@@ -115,8 +127,11 @@ def delete_centre(centre_id):
                 except Exception as e:
                     app.logger.warning(f"Could not delete image file {old_path}: {e}")
 
-        cursor.execute("DELETE FROM shopping_centre WHERE id=%s", (centre_id,))
+        # Delete DB row
+        cursor.execute("DELETE FROM shopping_centre WHERE id = %s", (centre_id,))
 
     db.get_db().commit()
-    flash(f"Deleted centre: {centre['name']}", "success")
-    return redirect(url_for("centrelist"))
+
+    # Inform the user and go back to this city's list
+    flash(f"Deleted ‘{centre_name}’ in {city_name}.", "success")
+    return redirect(url_for("centrelist", city=city_name))
