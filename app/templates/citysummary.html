@@ -23,7 +23,7 @@
     </div>
 </div>
 
-    <!-- Flash Messages -->
+   <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div class="mb-3">
@@ -38,33 +38,113 @@
       {% endif %}
     {% endwith %}
 
+<!-- Search Bar -->
+<form method="get" action="{{ url_for('city_summary') }}" class="mb-4 d-flex justify-content-center">
+  <div class="input-group" style="max-width: 500px; width: 100%;">
+    <input type="text" name="q" class="form-control" placeholder="Search city..."
+           value="{{ request.args.get('q', '') }}">
+    <button class="btn btn-primary" type="submit">
+      <i class="fas fa-search me-1"></i> Search
+    </button>
+    {% if request.args.get('q') %}
+      <a href="{{ url_for('city_summary') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-times"></i> Clear
+      </a>
+    {% endif %}
+  </div>
+</form>
+
+
 <div class="row g-4">
   {% for city in cities %}
   <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-    <a href="{{ url_for('centrelist', city=city.city_name) }}" class="text-decoration-none">
-      <div class="card shadow-sm h-100 border-primary">
-        <img
-          src="{{ city.image_url }}"
-          class="card-img-top"
-          alt="{{ city.city_name }} image"
-          onerror="this.onerror=null;this.src='{{ city.fallback_url }}';"
-        >
-        <div class="card-body text-center">
-          <h5 class="card-title text-primary">
+    <div class="card shadow-sm h-100 border-primary">
+      <img
+        src="{{ city.image_url }}"
+        class="card-img-top"
+        alt="{{ city.city_name }} image"
+        onerror="this.onerror=null;this.src='{{ city.fallback_url }}';"
+      >
+      <div class="card-body text-center">
+        <!-- Only city name is clickable -->
+        <h5 class="card-title text-primary">
+          <a href="{{ url_for('centrelist', city=city.city_name) }}" class="text-decoration-none text-primary">
             <i class="fas fa-city me-2"></i>{{ city.city_name }}
+          </a>
+        </h5>
+        <p class="card-text fs-4 fw-bold text-dark">{{ city.mall_count }}</p>
+        <small class="text-muted">Shopping Centres</small>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mb-2 me-2">
+        <!-- Delete button separate, not inside link -->
+        <button class="btn btn-outline-danger btn-sm" 
+                data-bs-toggle="modal" 
+                data-bs-target="#confirmDeleteCityModal{{ city.id }}"
+                title="Delete this city"
+                data-bs-toggle="tooltip" data-bs-placement="bottom">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div class="modal fade" id="confirmDeleteCityModal{{ city.id }}" tabindex="-1"
+       aria-labelledby="confirmDeleteCityLabel{{ city.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-danger">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteCityLabel{{ city.id }}">
+            Delete “{{ city.city_name }}”?
           </h5>
-          <p class="card-text fs-4 fw-bold text-dark">{{ city.mall_count }}</p>
-          <small class="text-muted">Shopping Centres</small>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          This will permanently remove the city and all its shopping centres. This action cannot be undone.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <form action="{{ url_for('delete_city', city_id=city.id) }}" method="POST">
+            <button type="submit" class="btn btn-danger">
+              <i class="fas fa-trash"></i> Yes, delete
+            </button>
+          </form>
         </div>
       </div>
-    </a>
-  </div>
-  {% else %}
-  <div class="col-12">
-    <div class="alert alert-warning text-center">
-      No cities found.
     </div>
   </div>
   {% endfor %}
 </div>
+
+
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="d-flex justify-content-center mt-4">
+  <ul class="pagination pagination-sm">  {# Change to pagination, pagination-lg, or pagination-sm as you like #}
+
+    <!-- Previous -->
+    <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('city_summary', page=page-1, per_page=per_page) }}">&laquo;</a>
+    </li>
+
+    <!-- Page numbers -->
+    {% for p in range(1, total_pages+1) %}
+      <li class="page-item {% if p == page %}active{% endif %}">
+        <a class="page-link" href="{{ url_for('city_summary', page=p, per_page=per_page) }}">{{ p }}</a>
+      </li>
+    {% endfor %}
+
+    <!-- Next -->
+    <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('city_summary', page=page+1, per_page=per_page) }}">&raquo;</a>
+    </li>
+
+  </ul>
+</div>
+{% endif %}
+
+
 {% endblock %}
