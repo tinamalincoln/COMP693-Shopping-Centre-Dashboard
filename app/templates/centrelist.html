@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}{% if city %}{{ city }} Shopping Centres{% else %}Shopping Centres{% endif %}{% endblock %}
+{% block title %}{{ current_city }} Shopping Centres{% endblock %}
 
 {% block breadcrumbs %}
 <nav aria-label="breadcrumb">
@@ -15,9 +15,22 @@
 </nav>
 {% endblock %}
 
-
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/centrelist.css') }}?v=1.0">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
+            <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
 
 <div class="full-height-container">
   <!-- Left: list -->
