@@ -1,0 +1,4 @@
+/* app/static/css/citysummary.css */
+  .city-card { transition: transform .2s, box-shadow .2s; }
+  .city-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0,0,0,.15); }
+  .city-card .btn { position: relative; z-index: 2; }
