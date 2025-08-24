@@ -1,6 +1,4 @@
-
-
-  // ---- Edit form change detection ----
+// ---- Edit form change detection ----
   var form = document.getElementById('edit-form');
   var saveBtn = document.getElementById('save-btn');
   if (form && saveBtn) {
