@@ -4,8 +4,8 @@
    Created By: Tina Ma
    Description: Create the shopping centre database and related tables
    Created Date: 28/07/2025
-   Updated Date: 09/08/2025
-   Version: 1.1
+   Updated Date: 24/08/2025
+   Version: 1.2
 */
 
 -- Create a new database
@@ -16,9 +16,11 @@ USE shoppingcentre;
 
 -- 1. City lookup
 CREATE TABLE city (
-  id   INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL UNIQUE
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  name           VARCHAR(100) NOT NULL UNIQUE,
+  image_filename VARCHAR(100) DEFAULT NULL
 );
+
 
 -- 2. Classification lookup
 CREATE TABLE classification (
