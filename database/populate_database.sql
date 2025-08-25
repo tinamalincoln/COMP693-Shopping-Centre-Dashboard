@@ -4,16 +4,20 @@
    Created By: Tina Ma
    Description: Insert data into related tables
    Created Date: 28/07/2025
-   Updated Date: 09/08/2025
-   Version: 1.1
+   Updated Date: 25/08/2025
+   Version: 1.2
 */
 
 -- Use shoppingcentre database to insert data into related tables
 USE shoppingcentre;
 
 -- City
-INSERT INTO city (name) VALUES
-('Christchurch');
+INSERT INTO city (name, image_filename) VALUES
+('Christchurch', 'Christchurch.jpg'),
+('Tauranga', 'Tauranga.jpg'),
+('Auckland', 'Auckland.jpg'),
+('Palmerston North', 'PalmerstonNorth.jpg'),
+('Rotorua', 'Rotorua.jpg');
 
 -- Classification
 INSERT INTO classification (name) VALUES
@@ -388,4 +392,44 @@ INSERT INTO shopping_centre (
   '166 Cashel Street, Christchurch',
   '2017-09-09',1.0000,
   650, 0, '', 3, 12904.00
+),
+-- FASHION ISLAND PAPAMOA
+(
+  (SELECT id FROM city WHERE name='Tauranga'),
+  NULL, NULL,
+  'FASHION ISLAND PAPAMOA',
+  'FASHION ISLAND PAPAMOA',
+  NULL,
+  '42 Gravatt Road, Papamoa, Tauranga'
+  , NULL, NULL, NULL, NULL, NULL, NULL, NULL
+),
+-- SILVERDALE SHOPPING CENTRE
+(
+  (SELECT id FROM city WHERE name='Auckland'),
+  NULL, NULL,
+  'SILVERDALE SHOPPING CENTRE',
+  'Silverdale Centre',
+  NULL,
+  '61 Silverdale Street, Silverdale, Auckland'
+  , NULL, NULL, NULL, NULL, NULL, NULL, NULL
+),
+-- THE PLAZA
+(
+  (SELECT id FROM city WHERE name='Palmerston North'),
+  NULL, NULL,
+  'THE PLAZA',
+  'THE PLAZA Palmerston North',
+  NULL,
+  '84 The Square, Palmerston North'
+  , NULL, NULL, NULL, NULL, NULL, NULL, NULL
+),
+-- TRADE CENTRAL
+(
+  (SELECT id FROM city WHERE name='Rotorua'),
+  NULL, NULL,
+  'TRADE CENTRAL',
+  'TRADE CENTRAL Rotorua',
+  NULL,
+  '1490 Amohau Street, Rotorua'
+  , NULL, NULL, NULL, NULL, NULL, NULL, NULL
 );
