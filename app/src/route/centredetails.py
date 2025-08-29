@@ -8,7 +8,7 @@ from app.src.model.centres import (
     get_centre_by_osm, update_centre,
     set_image_filename, get_image_filename
 )
-from app.src.model.geo import geocode_if_needed, build_ors_reach_url
+from app.src.model.geo import geocode_centremap, build_ors_reach_url
 from app.src.model.image import save_or_replace_image, upload_dir
 
 load_dotenv()
@@ -25,7 +25,7 @@ def centredetails():
     if not centre:
         return render_template("centredetails.html", error="Shopping centre not found.")
 
-    lat, lon = geocode_if_needed(centre)
+    lat, lon = geocode_centremap(centre)
     classic_map_url = build_ors_reach_url(lat, lon)
 
     return render_template(
