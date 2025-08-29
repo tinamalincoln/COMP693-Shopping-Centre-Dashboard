@@ -4,7 +4,7 @@ from app import app, db
 import requests
 
 
-def geocode_if_needed(centre: dict):
+def geocode_centremap(centre: dict):
     """
     Prefer cached lat/lon from DB. If missing, geocode once and save lat/lon.
     """
