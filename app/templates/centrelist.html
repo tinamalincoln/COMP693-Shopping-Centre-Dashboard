@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}{{ current_city }} Shopping Centres{% endblock %}
+{% block title %}Shopping Centre Dashboard{% endblock %}
 
 {% block breadcrumbs %}
 <nav aria-label="breadcrumb">
@@ -7,53 +7,37 @@
     <li class="breadcrumb-item">
       <a href="{{ url_for('city_summary') }}"><i class="fas fa-home"></i></a>
     </li>
-    <li class="breadcrumb-item">
-      <a href="{{ url_for('city_summary') }}">City Summary</a>
-    </li>
-    <li class="breadcrumb-item active" aria-current="page">{{ current_city }}</li>
+    {% if current_city %}
+      <li class="breadcrumb-item active" aria-current="page">{{ current_city }} Shopping Centres</li>
+    {% else %}
+      <li class="breadcrumb-item active" aria-current="page">Shopping Centres</li>
+    {% endif %}
   </ol>
 </nav>
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/centrelist.css') }}?v=1.0">
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
-            <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/centrelist.css') }}?v=1.3">
 
 <div class="full-height-container">
   <!-- Left: list -->
   <div class="list-panel">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h4 class="mb-0">
-        <i class="fas fa-store me-2"></i>{{ current_city }} Shopping Centres
+    <div class="d-flex align-items-center justify-content-between">
+      <h4 class="mb-3">
+        <i class="fas fa-store me-2"></i>
+        {% if current_city %}{{ current_city }} Shopping Centres{% else %}Shopping Centres{% endif %}
       </h4>
       <a href="{{ url_for('create_centre') }}"
-           class="btn btn-outline-success btn-sm"
-           title="Create New Centre"
-           data-bs-toggle="tooltip"
-           data-bs-placement="bottom"
-           >
-         <i class="fas fa-plus"></i>
+         class="btn btn-outline-success btn-sm"
+         data-bs-toggle="tooltip" data-bs-placement="bottom" title="New Centre">
+         <i class="fas fa-plus me-1"></i>
       </a>
     </div>
 
-    <!-- Search box -->
+    <!-- Search -->
     <form method="get" action="{{ url_for('centredetails') }}" class="mb-3">
       <div class="input-group">
-        <input type="text" name="name" class="form-control"
-               list="centreSuggestions"
+        <input type="text" name="name" class="form-control" list="centreSuggestions"
                placeholder="Search by Shopping Centre Name" required>
         <datalist id="centreSuggestions">
           {% for centre in centres %}
@@ -64,22 +48,34 @@
       </div>
     </form>
 
-    <!-- Centre links -->
-    {% for centre in centres %}
-      <a class="centre-link" href="{{ url_for('centredetails') }}?name={{ centre.osm_name }}">
-        {{ centre.name }}
-      </a>
-    {% else %}
-      <p class="text-muted">No centres found for {{ current_city }}.</p>
-    {% endfor %}
+    <!-- Numbered list -->
+     <div class="centre-list">
+       {% for centre in centres %}
+         <div class="d-flex align-items-center mb-2">
+          <span class="num-badge me-2">{{ loop.index }}</span>
+          <a class="centre-link"
+             href="{{ url_for('centredetails') }}?name={{ centre.osm_name }}"
+             data-centre-idx="{{ loop.index0 }}">
+             {{ centre.name }}
+          </a>
+         </div>
+       {% else %}
+         <p>No centres found.</p>
+       {% endfor %}
+     </div>
   </div>
 
   <!-- Right: map -->
   <div id="map"
-       data-lat="{{ lat }}"
-       data-lon="{{ lon }}">
+       data-lat='{{ lat | tojson }}'
+       data-lon='{{ lon | tojson }}'>
   </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/centrelist.js') }}?v=1.0"></script>
+<!-- Provide marker data to JS -->
+<script id="centres-data" type="application/json">
+  {{ centres_for_map | tojson }}
+</script>
+
+<script src="{{ url_for('static', filename='js/centrelist.js') }}?v=1.2"></script>
 {% endblock %}
