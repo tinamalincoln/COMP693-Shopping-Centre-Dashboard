@@ -43,32 +43,44 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-<!-- Optional right-side nav -->
+<!-- Right-side nav -->
 <div class="collapse navbar-collapse" id="mainNav">
   <ul class="navbar-nav ms-auto">
-
-    <!-- Dropdown -->
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="navDropdown" role="button"
-         data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-bars me-1"></i> Menu
-      </a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navDropdown">
-        <li>
-          <a class="dropdown-item" href="{{ url_for('city_summary') }}">
-            <i class="fas fa-city me-1"></i> City Summary
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-item" href="{{ url_for('create_centre') }}">
-            <i class="fas fa-store me-1"></i> New Centre
-          </a>
-        </li>
-      </ul>
-    </li>
-
+    <!-- Visitor: only see Login -->
+    {% if not current_user %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-bars me-1"></i> Menu
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+          <li><a class="dropdown-item" href="{{ url_for('city_summary') }}"><i class="fas fa-city me-2"></i>City Summary</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{{ url_for('login') }}"><i class="fas fa-right-to-bracket me-2"></i>Login</a></li>
+        </ul>
+      </li>
+    {% else %}
+      <!-- Logged-in: show role-aware actions -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="menuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-bars me-1"></i> Menu
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+          <li><a class="dropdown-item" href="{{ url_for('city_summary') }}"><i class="fas fa-city me-2"></i>City Summary</a></li>
+          {% if can_edit %}
+            <li><a class="dropdown-item" href="{{ url_for('create_centre') }}"><i class="fas fa-store me-2"></i>New Centre</a></li>
+          {% endif %}
+          {% if is_admin %}
+            <li><a class="dropdown-item" href="{{ url_for('staff_admin') }}"><i class="fas fa-users-gear me-2"></i>Manage Staff</a></li>
+          {% endif %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{{ url_for('profile') }}"><i class="fas fa-id-badge me-2"></i>My Profile ({{ current_user.role }})</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-right-from-bracket me-2"></i>Logout</a></li>
+        </ul>
+      </li>
+    {% endif %}
   </ul>
 </div>
+
 
   </div>
 </nav>
