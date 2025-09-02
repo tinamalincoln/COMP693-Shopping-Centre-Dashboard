@@ -1,8 +1,9 @@
 # This script runs automatically when our `app` module is first loaded,
 # and handles all the setup for our Flask app.
-from flask import Flask
+from flask import Flask, g
 from app import db
 from datetime import datetime
+from app.src.model.auth import load_logged_in_user, is_admin, is_editor
 
 app = Flask(__name__, static_folder='static') # Place new Bootstrap files in /static
 
@@ -24,6 +25,21 @@ from app import connect
 db.init_db(app, connect.dbuser, connect.dbpass, connect.dbhost, connect.dbname)
 
 
+@app.before_request
+def before_request():
+    load_logged_in_user()
+
+@app.context_processor
+def inject_globals():
+    return {
+        'current_year': datetime.now().year,
+        'current_user': getattr(g, "user", None),
+        'can_edit': is_editor(),
+        'can_delete': is_admin(),
+        'is_admin': is_admin(),
+        'is_editor': is_editor()
+    }
+
 @app.context_processor
 def inject_current_year():
     return {'current_year': datetime.now().year}
@@ -38,3 +54,4 @@ from app.src.route import centrelist
 from app.src.route import centredetails
 from app.src.route import centrecreate
 from app.src.route import citysummary
+from app.src.route import auth
