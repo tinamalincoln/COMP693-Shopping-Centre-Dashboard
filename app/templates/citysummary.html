@@ -86,22 +86,26 @@
         <!-- Card actions (Edit + Delete) -->
         <div class="card-footer bg-transparent border-0 d-flex justify-content-end gap-2 pt-0 pb-3 pe-3">
           <!-- Edit -->
-          <button class="btn btn-outline-warning btn-sm"
-                  data-bs-toggle="offcanvas"
-                  data-bs-target="#editCityCanvas{{ city.id }}"
-                  data-bs-placement="bottom"
-                  title="Edit city">
-            <i class="fas fa-edit"></i>
-          </button>
+          {% if can_edit %}
+             <button class="btn btn-outline-warning btn-sm"
+                     data-bs-toggle="offcanvas"
+                     data-bs-target="#editCityCanvas{{ city.id }}"
+                     data-bs-placement="bottom"
+                     title="Edit city">
+               <i class="fas fa-edit"></i>
+             </button>
+          {% endif %}
 
           <!-- Delete -->
-          <button class="btn btn-outline-danger btn-sm"
-                  data-bs-toggle="modal"
-                  data-bs-target="#confirmDeleteCityModal{{ city.id }}"
-                  data-bs-placement="bottom"
-                  title="Delete city">
-            <i class="fas fa-trash"></i>
-          </button>
+          {% if can_delete %}
+             <button class="btn btn-outline-danger btn-sm"
+                     data-bs-toggle="modal"
+                     data-bs-target="#confirmDeleteCityModal{{ city.id }}"
+                     data-bs-placement="bottom"
+                     title="Delete city">
+               <i class="fas fa-trash"></i>
+             </button>
+          {% endif %}
         </div>
       </div>
     </div>
