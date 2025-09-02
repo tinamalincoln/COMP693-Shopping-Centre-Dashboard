@@ -1,6 +1,17 @@
 {% extends "layout.html" %}
 {% block title %}Create New Centre{% endblock %}
 
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{{ url_for('city_summary') }}"><i class="fas fa-home"></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Create New Centre</li>
+  </ol>
+</nav>
+{% endblock %}
+
 {% block head_extra %}
   <!-- Reuse the same CSS as centredetails to keep design consistent -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/centredetails.css') }}">
@@ -52,7 +63,7 @@
           </div>
           
           <div class="mb-3">
-            <label for="cityInput" class="form-label">City</label>
+            <label for="cityInput" class="form-label"><i class="fas fa-city me-2"></i><strong>City:</strong></label>
             <input list="cityOptions" name="city_name" id="cityInput" class="form-control" placeholder="Select or type a city" required>
             <datalist id="cityOptions">
               {% for city in cities %}
@@ -65,7 +76,7 @@
           
           <!-- Classification -->
 <div class="mb-3">
-  <label for="classificationInput" class="form-label">Classification</label>
+  <label for="classificationInput" class="form-label"><i class="fas fa-tags me-2"></i><strong>Classification:</strong></label>
   <input
     list="classificationOptions"
     name="classification_name"
@@ -84,7 +95,7 @@
 
 <!-- Centre Type -->
 <div class="mb-3">
-  <label for="centreTypeInput" class="form-label">Centre Type</label>
+  <label for="centreTypeInput" class="form-label"><i class="fas fa-building me-2"></i><strong>Centre Type:</strong></label>
   <input
     list="centreTypeOptions"
     name="centre_type_name"
