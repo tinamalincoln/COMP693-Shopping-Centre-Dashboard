@@ -74,43 +74,40 @@
           </div>
 
           
-          <!-- Classification -->
-<div class="mb-3">
-  <label for="classificationInput" class="form-label"><i class="fas fa-tags me-2"></i><strong>Classification:</strong></label>
-  <input
-    list="classificationOptions"
-    name="classification_name"
-    id="classificationInput"
-    class="form-control"
-    placeholder="Select or type a classification"
-    required
-  >
-  <datalist id="classificationOptions">
-    {% for c in classifications %}
-      <option value="{{ c.name }}"></option>
-    {% endfor %}
-  </datalist>
-  <small class="text-muted">Start typing to pick an existing classification or enter a new one.</small>
-</div>
-
-<!-- Centre Type -->
-<div class="mb-3">
-  <label for="centreTypeInput" class="form-label"><i class="fas fa-building me-2"></i><strong>Centre Type:</strong></label>
-  <input
-    list="centreTypeOptions"
-    name="centre_type_name"
-    id="centreTypeInput"
-    class="form-control"
-    placeholder="Select or type a centre type"
-    required
-  >
-  <datalist id="centreTypeOptions">
-    {% for t in types %}
-      <option value="{{ t.name }}"></option>
-    {% endfor %}
-  </datalist>
-  <small class="text-muted">Start typing to pick an existing centre type or enter a new one.</small>
-</div>
+      <!-- Classification -->
+        <div class="mb-3">
+           <label for="classificationInput" class="form-label"><i class="fas fa-tags me-2"></i><strong>Classification:</strong></label>
+           <input
+           list="classificationOptions"
+           name="classification_name"
+           id="classificationInput"
+           class="form-control"
+           placeholder="Select or type a classification"
+           required>
+           <datalist id="classificationOptions">
+            {% for c in classifications %}
+            <option value="{{ c.name }}"></option>
+            {% endfor %}
+           </datalist>
+           <small class="text-muted">Start typing to pick an existing classification or enter a new one.</small>
+        </div>
+      <!-- Centre Type -->
+      <div class="mb-3">
+        <label for="centreTypeInput" class="form-label"><i class="fas fa-building me-2"></i><strong>Centre Type:</strong></label>
+        <input
+        list="centreTypeOptions"
+        name="centre_type_name"
+        id="centreTypeInput"
+        class="form-control"
+        placeholder="Select or type a centre type"
+        required>
+        <datalist id="centreTypeOptions">
+          {% for t in types %}
+          <option value="{{ t.name }}"></option>
+          {% endfor %}
+        </datalist>
+        <small class="text-muted">Start typing to pick an existing centre type or enter a new one.</small>
+      </div>
 
           <div class="mt-3">
             <label class="form-label"><i class="fas fa-calendar-alt me-2"></i><strong>Date Opened:</strong></label>
