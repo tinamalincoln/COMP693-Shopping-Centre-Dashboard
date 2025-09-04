@@ -1,0 +1,175 @@
+{% extends "layout.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{{ url_for('city_summary') }}"><i class="fa-solid fa-house"></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><i class="fa-regular fa-circle-user me-1"></i> Profile</li>
+  </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+  <!-- Account details -->
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <i class="fa-solid fa-user-pen me-2"></i> <strong>Account Details</strong>
+      </div>
+      <div class="card-body">
+        <form id="details-form" method="POST" action="{{ url_for('profile') }}">
+          <input type="hidden" name="form" value="details">
+
+          <div class="mb-3">
+            <label class="form-label"><i class="fa-solid fa-user me-2"></i>Username <span class="text-danger">*</span></label>
+            <input type="text" name="username" class="form-control" value="{{ user.username }}" required>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label"><i class="fa-solid fa-id-badge me-2"></i>First Name <span class="text-danger">*</span></label>
+              <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label"><i class="fa-solid fa-id-badge me-2"></i>Last Name <span class="text-danger">*</span></label>
+              <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" required>
+            </div>
+          </div>
+
+          <div class="mb-3 mt-3">
+            <label class="form-label"><i class="fa-solid fa-envelope me-2"></i>Email <span class="text-danger">*</span></label>
+            <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label"><i class="fa-solid fa-briefcase me-2"></i>Position</label>
+            <input type="text" name="position" class="form-control"
+                   list="positions" value="{{ user.position or '' }}"
+                   placeholder="Select or type a new position">
+            <datalist id="positions">
+              {% for p in positions %}
+                <option value="{{ p }}"></option>
+              {% endfor %}
+            </datalist>
+          </div>
+
+          <div class="text-end">
+            <button type="submit" id="save-details-btn" class="btn btn-outline-success" disabled>
+              <i class="fa-solid fa-floppy-disk me-1"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-muted">
+        <i class="fa-solid fa-user-shield me-1"></i><strong>Role:</strong>
+        <span class="badge bg-info text-white">{{ user.role|title }}</span>
+        <i class="fa-solid fa-toggle-on ms-3 me-1"></i><strong>Status:</strong>
+        {% if user.status == "active" %}
+          <span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Active</span>
+        {% else %}
+          <span class="badge bg-secondary"><i class="fa-solid fa-ban me-1"></i>Inactive</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Change password -->
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-warning text-dark">
+        <i class="fa-solid fa-key me-2"></i> <strong>Change Password</strong>
+      </div>
+      <div class="card-body">
+        <form id="password-form" method="post" action="{{ url_for('profile') }}">
+          <input type="hidden" name="form" value="password">
+          <div class="mb-3">
+            <label class="form-label"><i class="fa-solid fa-lock me-2"></i>Current Password</label>
+            <input type="password" name="current_password" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="fa-solid fa-lock me-2"></i>New Password</label>
+            <input type="password" name="new_password" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label"><i class="fa-solid fa-check-double me-2"></i>Confirm New Password</label>
+            <input type="password" name="confirm_password" class="form-control" required>
+          </div>
+          <div class="text-end">
+            <button type="submit" id="update-password-btn" class="btn btn-outline-success" disabled>
+              <i class="fa-solid fa-floppy-disk me-1"></i> Update Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if user.role == "admin" %}
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-danger text-white">
+        <i class="fa-solid fa-users-gear me-2"></i> <strong>Staff Management (Admin Only)</strong>
+      </div>
+      <div class="card-body">
+        <a href="{{ url_for('staff_admin') }}" class="btn btn-outline-danger btn-sm">
+          <i class="fa-solid fa-users me-1"></i> Manage Staff
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- JavaScript for button state -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // --- Account Details form ---
+  const detailsForm = document.getElementById("details-form");
+  const saveDetailsBtn = document.getElementById("save-details-btn");
+  const initialDetails = new FormData(detailsForm);
+
+  function checkDetailsChanged() {
+    const current = new FormData(detailsForm);
+    for (const [k, v] of current.entries()) {
+      if (initialDetails.get(k) !== v) return true;
+    }
+    return false;
+  }
+
+  detailsForm.addEventListener("input", () => {
+    saveDetailsBtn.disabled = !checkDetailsChanged();
+  });
+
+  // --- Password form ---
+  const passwordForm = document.getElementById("password-form");
+  const updatePasswordBtn = document.getElementById("update-password-btn");
+
+  function checkPasswordChanged() {
+    const currentPw = passwordForm.querySelector('input[name="current_password"]').value.trim();
+    const newPw = passwordForm.querySelector('input[name="new_password"]').value.trim();
+    const confirmPw = passwordForm.querySelector('input[name="confirm_password"]').value.trim();
+    return currentPw !== "" && newPw !== "" && confirmPw !== "";
+  }
+
+  passwordForm.addEventListener("input", () => {
+    updatePasswordBtn.disabled = !checkPasswordChanged();
+  });
+});
+</script>
+{% endblock %}
