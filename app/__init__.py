@@ -55,3 +55,4 @@ from app.src.route import centredetails
 from app.src.route import centrecreate
 from app.src.route import citysummary
 from app.src.route import auth
+from app.src.route import staff_admin
