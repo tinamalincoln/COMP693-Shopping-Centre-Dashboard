@@ -1,0 +1,328 @@
+{% extends "layout.html" %}
+{% block title %}Manage Staff{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('city_summary') }}"><i class="fas fa-home"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-users-gear me-1"></i> Manage Staff</li>
+  </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage_staff.css') }}">
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h3 class="mb-0"><i class="fas fa-users-gear me-2"></i> Staff Users</h3>
+
+  <!-- Create New Staff (Offcanvas trigger) -->
+  <button class="btn btn-outline-success" data-bs-toggle="offcanvas" data-bs-target="#createStaffCanvas" data-bs-toggle="tooltip" title="Create a new staff user">
+    <i class="fas fa-user-plus me-1"></i> New Staff
+  </button>
+</div>
+
+<!-- Search -->
+<form method="get" class="mb-3">
+  <div class="input-group" style="max-width: 520px;">
+    <input type="text" name="q" class="form-control" placeholder="Search username / name / email"
+           value="{{ request.args.get('q','') }}">
+    <button class="btn btn-primary" type="submit"><i class="fas fa-search me-1"></i> Search</button>
+    {% if request.args.get('q') %}
+      <a href="{{ url_for('staff_admin') }}" class="btn btn-outline-secondary"><i class="fas fa-times"></i> Clear</a>
+    {% endif %}
+  </div>
+</form>
+
+<!-- Table -->
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th><i class="fa-solid fa-user me-2"></i>Username</th>
+        <th><i class="fa-solid fa-id-badge me-2"></i>Name</th>
+        <th><i class="fa-solid fa-envelope me-2"></i>Email</th>
+        <th><i class="fa-solid fa-briefcase me-2"></i>Position</th>
+        <th><i class="fa-solid fa-user-shield me-1"></i>Role</th>
+        <th><i class="fa-solid fa-toggle-on ms-3 me-1"></i>Status</th>
+        <th class="text-end"><i class="fas fa-cogs me-2"></i>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in staff %}
+      <tr>
+        <td class="fw-semibold">{{ u.username }}</td>
+        <td>{{ u.first_name }} {{ u.last_name }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.position or '—' }}</td>
+        <td>
+          <span class="badge {% if u.role=='admin' %}bg-danger{% else %}bg-info text-white{% endif %}">
+            {{ u.role|title }}
+          </span>
+        </td>
+        <td>
+          {% if u.status=='active' %}
+            <span class="badge bg-success"><i class="fas fa-circle-check me-1"></i>Active</span>
+          {% else %}
+            <span class="badge bg-warning"><i class="fas fa-ban me-1"></i>Inactive</span>
+          {% endif %}
+        </td>
+        <td class="text-end">
+          <!-- Edit (offcanvas) -->
+          <button class="btn btn-outline-warning btn-sm"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#editStaffCanvas{{ u.id }}"
+                  data-bs-toggle="tooltip" title="Edit">
+            <i class="fas fa-user-pen"></i>
+          </button>
+
+          <!-- Delete trigger (opens modal) -->
+          <button class="btn btn-outline-danger btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#confirmDeleteStaffModal{{ u.id }}"
+                  data-bs-toggle="tooltip" title="Delete"
+                  {% if g.user and (g.user.get('id') == u.id) %}disabled{% endif %}>
+            <i class="fas fa-user-minus"></i>
+          </button>
+        </td>
+      </tr>
+
+      <!-- Confirm Delete Modal -->
+      <div class="modal fade" id="confirmDeleteStaffModal{{ u.id }}" tabindex="-1" aria-labelledby="confirmDeleteStaffLabel{{ u.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content border-danger">
+            <div class="modal-header">
+              <h5 class="modal-title text-danger" id="confirmDeleteStaffLabel{{ u.id }}">
+                Delete “{{ u.username }}”?
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>This will permanently remove the staff user <strong>{{ u.username }}</strong>. This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <i class="fas fa-times me-1"></i> Cancel
+              </button>
+              <form action="{{ url_for('delete_staff', user_id=u.id) }}" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-danger"
+                        {% if g.user and (g.user.get('id') == u.id) %}disabled title="You cannot delete yourself"{% endif %}>
+                  <i class="fas fa-trash me-1"></i> Yes, Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offcanvas Edit -->
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="editStaffCanvas{{ u.id }}" aria-labelledby="editStaffLabel{{ u.id }}">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="editStaffLabel{{ u.id }}"><i class="fas fa-user-pen me-2 text-warning"></i>Edit {{ u.username }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+          <form method="POST" action="{{ url_for('update_staff', user_id=u.id) }}" id="edit-staff-form-{{ u.id }}">
+            <div class="mb-3">
+              <label class="form-label"><i class="fa-solid fa-user me-2"></i>Username*</label>
+              <input type="text" name="username" class="form-control" value="{{ u.username }}" required>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label"><i class="fa-solid fa-id-badge me-2"></i>First Name*</label>
+                <input type="text" name="first_name" class="form-control" value="{{ u.first_name }}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label"><i class="fa-solid fa-id-badge me-2"></i>Last Name*</label>
+                <input type="text" name="last_name" class="form-control" value="{{ u.last_name }}" required>
+              </div>
+            </div>
+            <div class="mb-3 mt-3">
+              <label class="form-label"><i class="fa-solid fa-envelope me-2"></i>Email*</label>
+              <input type="email" name="email" class="form-control" value="{{ u.email }}" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label"><i class="fa-solid fa-briefcase me-2"></i>Position</label>
+              <input type="text" name="position" class="form-control" list="positions"
+                     value="{{ u.position or '' }}" placeholder="Select or type a new position">
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label"><i class="fa-solid fa-user-shield me-1"></i>Role*</label>
+                <select name="role" class="form-select" required>
+                  <option value="editor" {% if u.role=='editor' %}selected{% endif %}>Editor</option>
+                  <option value="admin"  {% if u.role=='admin'  %}selected{% endif %}>Admin</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label"><i class="fa-solid fa-toggle-on ms-3 me-1"></i>Status*</label>
+                <select name="status" class="form-select" required>
+                  <option value="active"   {% if u.status=='active' %}selected{% endif %}>Active</option>
+                  <option value="inactive" {% if u.status=='inactive' %}selected{% endif %}>Inactive</option>
+                </select>
+              </div>
+            </div>
+            <hr>
+            <div class="mb-3">
+              <label class="form-label"><i class="fa-solid fa-lock me-2"></i>Reset Password</label>
+              <input type="password" name="new_password" class="form-control" placeholder="Leave blank to keep current">
+            </div>
+            <div class="text-end">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>             
+                <button type="submit" class="btn btn-outline-success" id="save-staff-btn-{{ u.id }}">
+                <i class="fas fa-floppy-disk me-1"></i> Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Create Staff Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createStaffCanvas" aria-labelledby="createStaffLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="createStaffLabel"><i class="fas fa-user-plus me-2 text-success"></i>New Staff User</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form method="POST" action="{{ url_for('create_staff') }}">
+      <div class="mb-3">
+        <label class="form-label"><i class="fa-solid fa-user me-2"></i>Username*</label>
+        <input type="text" name="username" class="form-control" required>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label"><i class="fa-solid fa-id-badge me-2"></i>First Name*</label>
+          <input type="text" name="first_name" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label"><i class="fa-solid fa-id-badge me-2"></i>Last Name*</label>
+          <input type="text" name="last_name" class="form-control" required>
+        </div>
+      </div>
+      <div class="mb-3 mt-3">
+        <label class="form-label"><i class="fa-solid fa-envelope me-2"></i>Email*</label>
+        <input type="email" name="email" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label"><i class="fa-solid fa-briefcase me-2"></i>Position</label>
+        <input type="text" name="position" class="form-control" list="positions" placeholder="Select or type">
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label"><i class="fa-solid fa-user-shield me-1"></i>Role*</label>
+          <select name="role" class="form-select" required>
+            <option value="editor" selected>Editor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label"><i class="fa-solid fa-toggle-on ms-3 me-1"></i>Status*</label>
+          <select name="status" class="form-select" required>
+            <option value="active" selected>Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <hr>
+      <div class="mb-3">
+        <label class="form-label"><i class="fa-solid fa-lock me-2"></i>Initial Password*</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+      <div class="text-end">
+        <button class="btn btn-success"><i class="fas fa-user-plus me-1"></i> Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- datalist for positions (shared) -->
+<datalist id="positions">
+  {% for p in positions %}
+    <option value="{{ p }}"></option>
+  {% endfor %}
+</datalist>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Enable Bootstrap tooltips (optional)
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+
+
+  // For each staff edit offcanvas form
+  document.querySelectorAll('form[id^="edit-staff-form-"]').forEach((form) => {
+    const canvas  = form.closest('.offcanvas');
+    const saveBtn = form.querySelector('button[id^="save-staff-btn-"]');
+    if (!canvas || !saveBtn) return;
+
+    // Build a canonical snapshot of the form (ignores new_password)
+    const snapshot = () => {
+      const fd = new FormData(form);
+      fd.delete('new_password');                // don't consider password in baseline
+      // Normalize values to a stable string for comparison
+      const pairs = [];
+      for (const [k, v] of fd.entries()) {
+        pairs.push([k, (typeof v === 'string' ? v.trim() : v)]);
+      }
+      // Sort to avoid DOM order issues
+      pairs.sort((a, b) => a[0].localeCompare(b[0]));
+      return JSON.stringify(pairs);
+    };
+
+    let baseline = "";
+
+    // Recompute baseline when the offcanvas OPENS
+    canvas.addEventListener('shown.bs.offcanvas', () => {
+      baseline = snapshot();
+      saveBtn.disabled = true;  // start disabled
+    });
+
+    // Also reset when it closes
+    canvas.addEventListener('hidden.bs.offcanvas', () => {
+      baseline = "";
+      saveBtn.disabled = true;
+    });
+
+    const isChanged = () => {
+      // If any new password typed => enable
+      const pw = form.querySelector('input[name="new_password"]');
+      if (pw && pw.value.trim() !== "") return true;
+
+      // Compare current snapshot to baseline
+      return snapshot() !== baseline;
+    };
+
+    const refresh = () => { saveBtn.disabled = !isChanged(); };
+
+    // Listen to all relevant changes
+    form.addEventListener('input',  refresh);
+    form.addEventListener('change', refresh);
+
+    // If an offcanvas starts already open (rare), initialize once
+    if (canvas.classList.contains('show')) {
+      baseline = snapshot();
+      saveBtn.disabled = true;
+    }
+  });
+});
+</script>
+
+
+
+{% endblock %}
