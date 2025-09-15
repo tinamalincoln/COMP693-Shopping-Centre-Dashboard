@@ -433,3 +433,25 @@ INSERT INTO shopping_centre (
   '1490 Amohau Street, Rotorua'
   , NULL, NULL, NULL, NULL, NULL, NULL, NULL
 );
+
+-- staff_user
+INSERT INTO staff_user
+(username, password_hash, first_name, last_name, email, position, role, status)
+VALUES
+-- Admin user
+('admin1',
+ 'pbkdf2:sha256:1000000$k6rWfe3Eb7HKkvmw$5c928d0704d79fcea5ad5da27c07dc0448fa713f923ad90d401faaa0edd6bdc0',
+ 'Admin', 'One',
+ 'admin1@lincolnuni.ac.nz',
+ 'lecturer',
+ 'admin',
+ 'active'),
+
+-- Editor user
+('editor1',
+ 'pbkdf2:sha256:1000000$WS2RUBK1c6KnpLlL$e76241234e3957156040ee4b6a2753d55cd0c5300378ca11ac7af31a98374d6b',
+ 'Editor', 'One',
+ 'editor1@lincolnuni.ac.nz',
+ 'student',
+ 'editor',
+ 'active');
