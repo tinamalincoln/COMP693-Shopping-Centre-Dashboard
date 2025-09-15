@@ -62,5 +62,19 @@ CREATE TABLE shopping_centre (
   CONSTRAINT uq_city_name UNIQUE (city_id, name)
 );
 
-
-
+-- 5. Staff users (editors/admins)
+CREATE TABLE staff_user (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  username        VARCHAR(50)  NOT NULL UNIQUE,
+  password_hash   VARCHAR(255) NOT NULL,
+  first_name      VARCHAR(100) NOT NULL,
+  last_name       VARCHAR(100) NOT NULL,
+  email           VARCHAR(150) NOT NULL UNIQUE,
+  position        ENUM('student','lecturer') DEFAULT NULL,
+  role            ENUM('editor','admin') NOT NULL,
+  status          ENUM('active','inactive') NOT NULL DEFAULT 'active',
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_staff_user_role (role),
+  INDEX idx_staff_user_status (status)
+);
