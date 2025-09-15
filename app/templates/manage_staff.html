@@ -56,8 +56,8 @@
         <th><i class="fa-solid fa-id-badge me-2"></i>Name</th>
         <th><i class="fa-solid fa-envelope me-2"></i>Email</th>
         <th><i class="fa-solid fa-briefcase me-2"></i>Position</th>
-        <th><i class="fa-solid fa-user-shield me-1"></i>Role</th>
-        <th><i class="fa-solid fa-toggle-on ms-3 me-1"></i>Status</th>
+        <th><i class="fa-solid fa-user-shield me-2"></i>Role</th>
+        <th><i class="fa-solid fa-toggle-on ms-3 me-2"></i>Status</th>
         <th class="text-end"><i class="fas fa-cogs me-2"></i>Actions</th>
       </tr>
     </thead>
@@ -182,9 +182,9 @@
             </div>
             <div class="text-end">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>             
-                <button type="submit" class="btn btn-outline-success" id="save-staff-btn-{{ u.id }}">
-                <i class="fas fa-floppy-disk me-1"></i> Save
-              </button>
+                <button type="submit" class="btn btn-outline-success" id="save-staff-btn-{{ u.id }}" disabled>
+                    <i class="fas fa-floppy-disk me-1"></i> Save
+                </button>
             </div>
           </form>
         </div>
@@ -226,14 +226,14 @@
       </div>
       <div class="row g-3">
         <div class="col-md-6">
-          <label class="form-label"><i class="fa-solid fa-user-shield me-1"></i>Role*</label>
+          <label class="form-label"><i class="fa-solid fa-user-shield me-2"></i>Role*</label>
           <select name="role" class="form-select" required>
             <option value="editor" selected>Editor</option>
             <option value="admin">Admin</option>
           </select>
         </div>
         <div class="col-md-6">
-          <label class="form-label"><i class="fa-solid fa-toggle-on ms-3 me-1"></i>Status*</label>
+          <label class="form-label"><i class="fa-solid fa-toggle-on ms-3 me-2"></i>Status*</label>
           <select name="status" class="form-select" required>
             <option value="active" selected>Active</option>
             <option value="inactive">Inactive</option>
@@ -246,7 +246,10 @@
         <input type="password" name="password" class="form-control" required>
       </div>
       <div class="text-end">
-        <button class="btn btn-success"><i class="fas fa-user-plus me-1"></i> Create</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>  
+        <button type="submit" class="btn btn-success" id="create-staff-btn" disabled>
+            <i class="fas fa-user-plus me-1"></i> Create
+        </button>
       </div>
     </form>
   </div>
@@ -260,69 +263,71 @@
 </datalist>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  // Enable Bootstrap tooltips (optional)
-  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+document.addEventListener('DOMContentLoaded', () => {
+  // Find all offcanvas edit panels
+  document.querySelectorAll('.offcanvas').forEach(canvas => {
+    const form    = canvas.querySelector('form');
+    const saveBtn = canvas.querySelector('button[type="submit"]');
 
+    if (!form || !saveBtn) return;
 
-  // For each staff edit offcanvas form
-  document.querySelectorAll('form[id^="edit-staff-form-"]').forEach((form) => {
-    const canvas  = form.closest('.offcanvas');
-    const saveBtn = form.querySelector('button[id^="save-staff-btn-"]');
-    if (!canvas || !saveBtn) return;
-
-    // Build a canonical snapshot of the form (ignores new_password)
-    const snapshot = () => {
-      const fd = new FormData(form);
-      fd.delete('new_password');                // don't consider password in baseline
-      // Normalize values to a stable string for comparison
-      const pairs = [];
-      for (const [k, v] of fd.entries()) {
-        pairs.push([k, (typeof v === 'string' ? v.trim() : v)]);
-      }
-      // Sort to avoid DOM order issues
-      pairs.sort((a, b) => a[0].localeCompare(b[0]));
-      return JSON.stringify(pairs);
-    };
-
-    let baseline = "";
-
-    // Recompute baseline when the offcanvas OPENS
+    // When the panel opens: reset state
     canvas.addEventListener('shown.bs.offcanvas', () => {
-      baseline = snapshot();
-      saveBtn.disabled = true;  // start disabled
-    });
-
-    // Also reset when it closes
-    canvas.addEventListener('hidden.bs.offcanvas', () => {
-      baseline = "";
+      // Disable Save until a change happens
       saveBtn.disabled = true;
-    });
 
-    const isChanged = () => {
-      // If any new password typed => enable
+      // Clear any leftover password so typing = change
       const pw = form.querySelector('input[name="new_password"]');
-      if (pw && pw.value.trim() !== "") return true;
+      if (pw) pw.value = '';
 
-      // Compare current snapshot to baseline
-      return snapshot() !== baseline;
-    };
+      // Once-only listener on each field to flip Save on
+      Array.from(form.elements).forEach(el => {
+        // Skip unnamed elements
+        if (!el.name) return;
 
-    const refresh = () => { saveBtn.disabled = !isChanged(); };
+        // On first edit or select change, enable Save and remove this handler
+        const turnOn = () => {
+          saveBtn.disabled = false;
+          el.removeEventListener('input', turnOn);
+          el.removeEventListener('change', turnOn);
+        };
 
-    // Listen to all relevant changes
-    form.addEventListener('input',  refresh);
-    form.addEventListener('change', refresh);
-
-    // If an offcanvas starts already open (rare), initialize once
-    if (canvas.classList.contains('show')) {
-      baseline = snapshot();
-      saveBtn.disabled = true;
-    }
+        el.addEventListener('input', turnOn, { once: true });
+        el.addEventListener('change', turnOn, { once: true });
+      });
+    });
   });
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Grab the offcanvas, form, and Create button
+  const createCanvas = document.getElementById('createStaffCanvas');
+  const createForm   = document.getElementById('create-staff-form');
+  const createBtn    = document.getElementById('create-staff-btn');
+
+  if (!createCanvas || !createForm || !createBtn) return;
+
+  // When the offcanvas is shown, disable Create and attach "once" listeners
+  createCanvas.addEventListener('shown.bs.offcanvas', () => {
+    createBtn.disabled = true;
+
+    Array.from(createForm.elements).forEach(el => {
+      if (!el.name) return;  // skip unlabeled elements
+
+      const enable = () => {
+        createBtn.disabled = false;
+        el.removeEventListener('input', enable);
+        el.removeEventListener('change', enable);
+      };
+
+      el.addEventListener('input', enable,  { once: true });
+      el.addEventListener('change', enable, { once: true });
+    });
+  });
+});
+</script>
 
 
 {% endblock %}
