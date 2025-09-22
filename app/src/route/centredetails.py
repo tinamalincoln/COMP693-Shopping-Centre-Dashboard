@@ -6,11 +6,11 @@ from datetime import datetime
 
 from app.src.model.centres import (
     get_centre_by_osm, update_centre,
-    set_image_filename, get_image_filename
-)
+    set_image_filename, get_image_filename)
 from app.src.model.geo import geocode_centremap, build_ors_reach_url
 from app.src.model.image import save_or_replace_image, upload_dir
 
+# Load ORS API key from .env
 load_dotenv()
 ORS_API_KEY = os.getenv("ORS_API_KEY")
 
@@ -92,8 +92,6 @@ def edit_centre(centre_id):
 
     flash("Centre updated successfully.", "success")
     return redirect(url_for("centredetails", name=fields["osm_name"]))
-
-
 
 # Delete a shopping centre
 @app.route("/delete/<int:centre_id>", methods=["POST"])

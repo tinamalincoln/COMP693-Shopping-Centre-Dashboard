@@ -3,13 +3,14 @@ from app import app, db
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 
-# ---------- helpers ----------
+# Helper to require admin role
 def _require_admin():
     if not getattr(g, "user", None) or g.user.get("role") != "admin":
         flash("Admin access required.", "danger")
         return False
     return True
 
+# Helper to get distinct positions for profile form
 def _get_positions():
     with db.get_cursor() as cur:
         cur.execute("""
@@ -21,12 +22,13 @@ def _get_positions():
         rows = cur.fetchall()
     return [r["position"] for r in rows]
 
-# ---------- pages ----------
+# Staff admin dashboard (list users)
 @app.route("/staff-admin")
 def staff_admin():
     if not _require_admin(): 
         return redirect(url_for("login"))
-
+    
+    # List users with optional search
     q = (request.args.get("q") or "").strip()
     with db.get_cursor() as cur:
         if q:
@@ -55,7 +57,8 @@ def staff_admin():
 def create_staff():
     if not _require_admin(): 
         return redirect(url_for("login"))
-
+    
+    # Process form
     f = request.form
     username   = (f.get("username") or "").strip()
     first_name = (f.get("first_name") or "").strip()
@@ -86,7 +89,7 @@ def create_staff():
 
     return redirect(url_for("staff_admin"))
 
-# Update role/status/position/name/email/username (and optional password reset)
+# Update role/status/position/name/email/username and password reset
 @app.route("/staff-admin/<int:user_id>/update", methods=["POST"])
 def update_staff(user_id):
     if not _require_admin(): 
@@ -109,7 +112,7 @@ def update_staff(user_id):
     if role not in ("admin","editor") or status not in ("active","inactive"):
         flash("Invalid role/status.", "danger")
         return redirect(url_for("staff_admin"))
-
+    
     try:
         with db.get_cursor() as cur:
             if new_pw:
@@ -153,7 +156,7 @@ def delete_staff(user_id):
                 flash("User not found.", "warning")
                 return redirect(url_for("staff_admin"))
 
-            # Optional safety: prevent deleting last remaining admin
+            # Prevent deleting last remaining admin
             if row["role"] == "admin":
                 cur.execute("SELECT COUNT(*) AS c FROM staff_user WHERE role='admin' AND status='active'")
                 c = cur.fetchone()["c"]

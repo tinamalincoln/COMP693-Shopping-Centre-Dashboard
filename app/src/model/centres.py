@@ -1,7 +1,7 @@
 # app/src/model/centres.py
-
 from app import app, db
 
+# Centre-related database operations
 def list_centres():
     with db.get_cursor() as cursor:
         cursor.execute("""
@@ -14,6 +14,7 @@ def list_centres():
         """)
         return cursor.fetchall()
 
+# Get a centre by its OSM name
 def get_centre_by_osm(osm_name: str):
     with db.get_cursor() as cursor:
         cursor.execute("""
@@ -31,7 +32,7 @@ def get_centre_by_osm(osm_name: str):
         """, (osm_name,))
         return cursor.fetchone()
 
-
+# Get a centre by its ID
 def update_centre(centre_id: int, fields: dict):
     with db.get_cursor() as cursor:
         cursor.execute("""
@@ -47,18 +48,20 @@ def update_centre(centre_id: int, fields: dict):
         ))
     db.get_db().commit()
 
-
+# Set or update the image filename for a centre
 def set_image_filename(centre_id: int, filename: str):
     with db.get_cursor() as cursor:
         cursor.execute("UPDATE shopping_centre SET image_filename=%s WHERE id=%s", (filename, centre_id))
     db.get_db().commit()
 
+# Get the image filename for a centre
 def get_image_filename(centre_id: int):
     with db.get_cursor() as cursor:
         cursor.execute("SELECT image_filename FROM shopping_centre WHERE id=%s", (centre_id,))
         row = cursor.fetchone()
         return row.get("image_filename") if row else None
 
+# Delete a centre by ID
 def delete_centre(centre_id: int):
     with db.get_cursor() as cursor:
         cursor.execute("DELETE FROM shopping_centre WHERE id=%s", (centre_id,))

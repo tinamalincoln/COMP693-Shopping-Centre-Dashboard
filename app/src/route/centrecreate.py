@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 import os
 from datetime import date
 
+# Helper coercion functions
 def _coerce_none(v):
     # Turn empty strings into None
     return v if (v is not None and str(v).strip() != "") else None
@@ -28,13 +29,14 @@ def _coerce_decimal(v):
     except:
         return None
 
+# Create new centre route
 @app.route("/centre/new", methods=["GET", "POST"])
 def create_centre():
     if request.method == "POST":
         f = request.form
         image_file = request.files.get("image")
 
-        # 1) City resolution: support either city_id OR free-text city_name
+        # City resolution: support either city_id OR free-text city_name
         city_id = _coerce_none(f.get("city_id"))
         city_name = _coerce_none(f.get("city_name"))  # from a <input list="...">
 
@@ -56,7 +58,7 @@ def create_centre():
                 flash("Please select or type a city.", "danger")
                 return redirect(url_for("create_centre"))
 
-                        # --- Classification resolution (new or existing) ---
+            # --- Classification resolution (new or existing) ---
             classification_name = _coerce_none(f.get("classification_name"))
             if not classification_name:
                 flash("Please enter or select a classification.", "danger")
@@ -85,20 +87,17 @@ def create_centre():
                 cursor.execute("INSERT INTO centre_type (name) VALUES (%s)", (centre_type_name,))
                 db.get_db().commit()
                 centre_type_id = cursor.lastrowid
-
             
-            
-            
-            # 2) Other fields (coerce empties safely)
+            # Other fields (coerce empties safely)
             name = _coerce_none(f.get("name"))
             osm_name = _coerce_none(f.get("osm_name"))
             location = _coerce_none(f.get("location"))
             date_opened = _coerce_none(f.get("date_opened"))
-            # Optional: block future dates server-side
+            # block future dates server-side
             if date_opened and date_opened > str(date.today()):
                 flash("Date opened cannot be in the future.", "danger")
                 return redirect(url_for("create_centre"))
-
+            
             site_area_ha = _coerce_decimal(f.get("site_area_ha"))
             covered = _coerce_nonneg_int(f.get("covered_parking_num"))
             uncovered = _coerce_nonneg_int(f.get("uncovered_parking_num"))
@@ -112,7 +111,7 @@ def create_centre():
                 flash("Centre name is required.", "danger")
                 return redirect(url_for("create_centre"))
 
-            # 3) Insert centre row (image to be added after we get id)
+            # Insert centre row (image to be added after we get id)
             cursor.execute("""
                 INSERT INTO shopping_centre
                 (city_id, classification_id, centre_type_id, name, osm_name, location,
@@ -126,7 +125,7 @@ def create_centre():
             db.get_db().commit()
             new_id = cursor.lastrowid
 
-            # 4) Optional image upload
+            # Image upload
             if image_file and image_file.filename.strip():
                 from app.src.model.image import upload_dir  # your helper
                 upload_folder = upload_dir()

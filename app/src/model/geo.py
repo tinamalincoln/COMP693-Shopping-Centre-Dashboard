@@ -1,9 +1,8 @@
 # app/src/model/geo.py
-
 from app import app, db
 import requests
 
-
+# Geocoding and mapping utilities
 def geocode_centremap(centre: dict):
     """
     Prefer cached lat/lon from DB. If missing, geocode once and save lat/lon.
@@ -15,7 +14,6 @@ def geocode_centremap(centre: dict):
     city_name = centre['city_name']
     
     # Handle special case where the centre is outside Christchurch
-    
     if query == "Woolworths, 121 Carters Road":
         location_query = query + ", Amberley, New Zealand"
     elif query == "Rolleston Square":
@@ -31,9 +29,11 @@ def geocode_centremap(centre: dict):
         "format": "json",
         "limit": 1
     }
-
+    
+    # Use a custom User-Agent as required by Nominatim usage policy
     resp = requests.get(url, headers={"User-Agent": "shopping-centre-dashboard"}, params=params, timeout=15)
 
+    # If we got a valid response, extract lat/lon and cache in DB
     if resp.status_code == 200 and resp.json():
         lat = float(resp.json()[0]["lat"])
         lon = float(resp.json()[0]["lon"])
@@ -46,6 +46,7 @@ def geocode_centremap(centre: dict):
     # fallback to Christchurch CBD
     return -43.5321, 172.6362
 
+# Build a URL to view the location on OpenRouteService maps
 def build_ors_reach_url(lat: float, lon: float, zoom: int = 15) -> str:
     return (
         f"https://classic-maps.openrouteservice.org/reach"

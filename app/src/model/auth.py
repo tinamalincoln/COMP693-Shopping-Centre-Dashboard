@@ -4,6 +4,7 @@ from flask import session, g
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 
+# User-related database operations
 def get_user_by_username(username: str) -> Optional[Dict]:
     with db.get_cursor() as cur:
         cur.execute("""
@@ -13,15 +14,18 @@ def get_user_by_username(username: str) -> Optional[Dict]:
         """, (username,))
         return cur.fetchone()
 
+# Verify a plaintext password against the stored hash
 def verify_password(password_hash: str, password: str) -> bool:
     return check_password_hash(password_hash, password)
 
+# Set a new password for a user
 def set_password(user_id: int, new_password: str):
     with db.get_cursor() as cur:
         cur.execute("UPDATE staff_user SET password_hash=%s WHERE id=%s",
                     (generate_password_hash(new_password), user_id))
     db.get_db().commit()
 
+# Create a new user
 def create_user(username, password, first_name, last_name, email, position, role):
     with db.get_cursor() as cur:
         cur.execute("""
@@ -30,16 +34,19 @@ def create_user(username, password, first_name, last_name, email, position, role
         """, (username, generate_password_hash(password), first_name, last_name, email, position, role))
     db.get_db().commit()
 
+# Delete a user by ID
 def delete_user(user_id: int):
     with db.get_cursor() as cur:
         cur.execute("DELETE FROM staff_user WHERE id=%s", (user_id,))
     db.get_db().commit()
 
+# Change a user's role
 def change_role(user_id: int, role: str):
     with db.get_cursor() as cur:
         cur.execute("UPDATE staff_user SET role=%s WHERE id=%s", (role, user_id))
     db.get_db().commit()
 
+# Session management functions
 def load_logged_in_user():
     """Call this in a before_request to populate g.user (or None)."""
     uid = session.get("user_id")
@@ -54,6 +61,7 @@ def load_logged_in_user():
         """, (uid,))
         g.user = cur.fetchone()
 
+# Login and logout helpers
 def login_user(user_id: int):
     session.clear()
     session["user_id"] = user_id
@@ -61,6 +69,7 @@ def login_user(user_id: int):
 def logout_user():
     session.clear()
 
+# Role checking helpers
 def is_editor() -> bool:
     return bool(getattr(g, "user", None) and g.user.get("role") in ("editor","admin"))
 

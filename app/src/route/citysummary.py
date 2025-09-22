@@ -5,14 +5,16 @@ import math
 import os
 from werkzeug.utils import secure_filename
 
+# City summary route
 @app.route("/")
 @app.route("/city-summary")
 def city_summary():
     # Read & sanitise query params
     q = request.args.get("q", "").strip()
     page = int(request.args.get("page", 1))
-    per_page = int(request.args.get("per_page", 4))
-
+    per_page = int(request.args.get("per_page", 8))
+    
+    # Load cities with optional search + pagination
     with db.get_cursor() as cursor:
         if q:
             cursor.execute("""
@@ -69,7 +71,7 @@ def city_summary():
         total_pages=total_pages,
     )
 
-
+# Delete a city (and its centres if any)
 @app.route("/delete_city/<int:city_id>", methods=["POST"])
 def delete_city(city_id):
     with db.get_cursor() as cursor:
@@ -94,13 +96,14 @@ def city_upload_dir():
     os.makedirs(folder, exist_ok=True)
     return folder
 
-
+# Edit a city (name + image)
 @app.route("/edit_city/<int:city_id>", methods=["POST"])
 def edit_city(city_id):
     form = request.form
     new_name = form.get("city_name").strip()
     image_file = request.files.get("image")
-
+    
+    # Validate
     upload_folder = os.path.join(app.root_path, "static", "uploads", "city_photo")
     os.makedirs(upload_folder, exist_ok=True)
 
