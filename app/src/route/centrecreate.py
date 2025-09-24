@@ -2,12 +2,11 @@
 from flask import render_template, request, redirect, url_for, flash
 from app import app, db
 from werkzeug.utils import secure_filename
-import os
 from datetime import date
+import os
 
-# Helper coercion functions
+# ---------- helpers ----------
 def _coerce_none(v):
-    # Turn empty strings into None
     return v if (v is not None and str(v).strip() != "") else None
 
 def _coerce_nonneg_int(v):
@@ -28,24 +27,28 @@ def _coerce_decimal(v):
         return float(v)
     except:
         return None
+# ---------------------------------------------
 
-# Create new centre route
 @app.route("/centre/new", methods=["GET", "POST"])
 def create_centre():
     if request.method == "POST":
         f = request.form
         image_file = request.files.get("image")
 
-        # City resolution: support either city_id OR free-text city_name
+        # ----- City: accept city_id or free-text city_name -----
         city_id = _coerce_none(f.get("city_id"))
-        city_name = _coerce_none(f.get("city_name"))  # from a <input list="...">
+        city_name = _coerce_none(f.get("city_name"))  # from datalist text box
 
         with db.get_cursor() as cursor:
             if city_id:
-                # trust the selected id (but you can validate it exists)
-                pass
+                # optional: validate it exists
+                cursor.execute("SELECT id, name FROM city WHERE id=%s", (city_id,))
+                row = cursor.fetchone()
+                if not row:
+                    flash("Selected city not found.", "danger")
+                    return redirect(url_for("create_centre"))
+                resolved_city_name = row["name"]
             elif city_name:
-                # look up by name; insert if missing
                 cursor.execute("SELECT id FROM city WHERE name=%s", (city_name,))
                 row = cursor.fetchone()
                 if row:
@@ -54,11 +57,12 @@ def create_centre():
                     cursor.execute("INSERT INTO city (name) VALUES (%s)", (city_name,))
                     db.get_db().commit()
                     city_id = cursor.lastrowid
+                resolved_city_name = city_name
             else:
                 flash("Please select or type a city.", "danger")
                 return redirect(url_for("create_centre"))
 
-            # --- Classification resolution (new or existing) ---
+            # ----- Classification: text via datalist -----
             classification_name = _coerce_none(f.get("classification_name"))
             if not classification_name:
                 flash("Please enter or select a classification.", "danger")
@@ -73,7 +77,7 @@ def create_centre():
                 db.get_db().commit()
                 classification_id = cursor.lastrowid
 
-            # --- Centre Type resolution (new or existing) ---
+            # ----- Centre type: text via datalist -----
             centre_type_name = _coerce_none(f.get("centre_type_name"))
             if not centre_type_name:
                 flash("Please enter or select a centre type.", "danger")
@@ -87,67 +91,69 @@ def create_centre():
                 cursor.execute("INSERT INTO centre_type (name) VALUES (%s)", (centre_type_name,))
                 db.get_db().commit()
                 centre_type_id = cursor.lastrowid
-            
-            # Other fields (coerce empties safely)
-            name = _coerce_none(f.get("name"))
-            osm_name = _coerce_none(f.get("osm_name"))
-            location = _coerce_none(f.get("location"))
-            date_opened = _coerce_none(f.get("date_opened"))
-            # block future dates server-side
-            if date_opened and date_opened > str(date.today()):
-                flash("Date opened cannot be in the future.", "danger")
-                return redirect(url_for("create_centre"))
-            
-            site_area_ha = _coerce_decimal(f.get("site_area_ha"))
-            covered = _coerce_nonneg_int(f.get("covered_parking_num"))
-            uncovered = _coerce_nonneg_int(f.get("uncovered_parking_num"))
-            redevelopments = _coerce_none(f.get("redevelopments"))
-            levels = _coerce_nonneg_int(f.get("levels"))
-            total_retail_space = _coerce_decimal(f.get("total_retail_space"))
-            classification_id = _coerce_none(f.get("classification_id"))
-            centre_type_id = _coerce_none(f.get("centre_type_id"))
 
+            # ----- Other fields -----
+            name        = _coerce_none(f.get("name"))
             if not name:
                 flash("Centre name is required.", "danger")
                 return redirect(url_for("create_centre"))
 
-            # Insert centre row (image to be added after we get id)
+            osm_name    = _coerce_none(f.get("osm_name"))
+            location    = _coerce_none(f.get("location"))
+            date_opened = _coerce_none(f.get("date_opened"))
+            if date_opened and date_opened > str(date.today()):
+                flash("Date opened cannot be in the future.", "danger")
+                return redirect(url_for("create_centre"))
+
+            site_area_ha          = _coerce_decimal(f.get("site_area_ha"))
+            covered               = _coerce_nonneg_int(f.get("covered_parking_num")) or 0
+            uncovered             = _coerce_nonneg_int(f.get("uncovered_parking_num")) or 0
+            redevelopments        = _coerce_none(f.get("redevelopments"))
+            levels                = _coerce_nonneg_int(f.get("levels"))
+            total_retail_space    = _coerce_decimal(f.get("total_retail_space"))
+
+            # IMPORTANT: do NOT overwrite classification_id / centre_type_id from form here
+
+            # ----- Insert the centre (image set after we know id) -----
             cursor.execute("""
                 INSERT INTO shopping_centre
                 (city_id, classification_id, centre_type_id, name, osm_name, location,
                  date_opened, site_area_ha, covered_parking_num, uncovered_parking_num,
-                 redevelopments, levels, total_retail_space)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                 redevelopments, levels, total_retail_space, image_filename)
+                VALUES
+                (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NULL)
             """, (
-                city_id, classification_id, centre_type_id, name, osm_name, location,
-                date_opened, site_area_ha, covered, uncovered, redevelopments, levels, total_retail_space
+                city_id, classification_id, centre_type_id,
+                name, osm_name, location,
+                date_opened, site_area_ha, covered, uncovered,
+                redevelopments, levels, total_retail_space
             ))
             db.get_db().commit()
             new_id = cursor.lastrowid
 
-            # Image upload
+            # ----- Optional image upload -----
             if image_file and image_file.filename.strip():
                 from app.src.model.image import upload_dir  # your helper
-                upload_folder = upload_dir()
+                upload_folder = upload_dir()  # resolves .../static/uploads/centre_photo
                 os.makedirs(upload_folder, exist_ok=True)
 
-                # Save as NameWithoutSpaces_ID.ext
-                ext = image_file.filename.rsplit(".", 1)[-1].lower()
-                new_filename = f"{name.replace(' ', '')}_{new_id}.{ext}"
-                path = os.path.join(upload_folder, new_filename)
-                image_file.save(path)
+                ext = secure_filename(image_file.filename).rsplit(".", 1)[-1].lower()
+                filename = f"{name.replace(' ', '')}_{new_id}.{ext}"
+                image_path = os.path.join(upload_folder, filename)
+                image_file.save(image_path)
 
                 cursor.execute(
                     "UPDATE shopping_centre SET image_filename=%s WHERE id=%s",
-                    (new_filename, new_id)
+                    (filename, new_id)
                 )
                 db.get_db().commit()
 
         flash("New shopping centre created successfully.", "success")
-        # Redirect to details using osm_name (like your existing flow)
-        return redirect(url_for("city_summary", name=osm_name or name))
 
-    # GET: load dropdown lists
+        # Redirect to the city's centre list you just used/created
+        return redirect(url_for("centrelist", city=resolved_city_name))
+
+    # -------- GET: render form with datalists --------
     with db.get_cursor() as cursor:
         cursor.execute("SELECT id, name FROM city ORDER BY name;")
         cities = cursor.fetchall()
@@ -160,5 +166,6 @@ def create_centre():
         "centrenew.html",
         cities=cities,
         classifications=classifications,
-        types=types
+        types=types,
+        today_iso=date.today().isoformat(),
     )
