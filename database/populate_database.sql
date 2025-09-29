@@ -4,8 +4,8 @@
    Created By: Tina Ma
    Description: Insert data into related tables
    Created Date: 28/07/2025
-   Updated Date: 25/08/2025
-   Version: 1.2
+   Updated Date: 29/09/2025
+   Version: 1.3
 */
 
 -- Use shoppingcentre database to insert data into related tables
@@ -17,7 +17,14 @@ INSERT INTO city (name, image_filename) VALUES
 ('Tauranga', 'Tauranga.jpg'),
 ('Auckland', 'Auckland.jpg'),
 ('Palmerston North', 'PalmerstonNorth.jpg'),
-('Rotorua', 'Rotorua.jpg');
+('Rotorua', 'Rotorua.jpg'),
+('Dunedin', 'Dunedin.jpg'),
+('Hamilton', 'Hamilton.jpg'),
+('Nelson', 'Nelson.webp'),
+('Picton', 'Picton.jpg'),
+('Timaru', 'Timaru.jpg'),
+('Wellington', 'Wellington.webp'),
+('Queenstown', 'Queenstown.jpg');
 
 -- Classification
 INSERT INTO classification (name) VALUES
@@ -396,42 +403,136 @@ INSERT INTO shopping_centre (
 -- FASHION ISLAND PAPAMOA
 (
   (SELECT id FROM city WHERE name='Tauranga'),
-  NULL, NULL,
+  (SELECT id FROM classification WHERE name='Other'), 
+  (SELECT id FROM centre_type WHERE name='Open Mall'),
   'FASHION ISLAND PAPAMOA',
   'FASHION ISLAND PAPAMOA',
-  NULL,
-  '42 Gravatt Road, Papamoa, Tauranga'
-  , NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  'FASHIONISLANDPAPAMOA_41.webp',
+  '42 Gravatt Road, Papamoa, Tauranga', 
+  '2006-05-01', 0.9990, 
+  0, 118, NULL, 1, 3511.00
 ),
 -- SILVERDALE SHOPPING CENTRE
 (
   (SELECT id FROM city WHERE name='Auckland'),
-  NULL, NULL,
+  (SELECT id FROM classification WHERE name='Sub Regional Centre'), 
+  (SELECT id FROM centre_type WHERE name='Open Mall'),
   'SILVERDALE SHOPPING CENTRE',
   'Silverdale Centre',
-  NULL,
-  '61 Silverdale Street, Silverdale, Auckland'
-  , NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  'SILVERDALESHOPPINGCENTRE_42.jpg',
+  '61 Silverdale Street, Silverdale, Auckland', 
+  '2012-10-18', 7.0198, 
+  0, 980, NULL, 1, 22980.00
 ),
 -- THE PLAZA
 (
   (SELECT id FROM city WHERE name='Palmerston North'),
-  NULL, NULL,
+  (SELECT id FROM classification WHERE name='City Centre'),
+  (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
   'THE PLAZA',
   'THE PLAZA Palmerston North',
-  NULL,
-  '84 The Square, Palmerston North'
-  , NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  'THEPLAZA_43.jpg',
+  '84 The Square, Palmerston North', 
+  '1986-04-01', 3.9000, 
+  579, 672, '1991, 1992, 2009.', 1, 32224.05
 ),
 -- TRADE CENTRAL
 (
   (SELECT id FROM city WHERE name='Rotorua'),
-  NULL, NULL,
+  (SELECT id FROM classification WHERE name='Other'), 
+  (SELECT id FROM centre_type WHERE name='Bulk Retail'),
   'TRADE CENTRAL',
   'TRADE CENTRAL Rotorua',
-  NULL,
-  '1490 Amohau Street, Rotorua'
-  , NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  'TRADECENTRAL_44.jpg',
+  '1490 Amohau Street, Rotorua', 
+  '2012-01-01', 6.7750, 
+  0, 550, NULL, 1, 19690.38
+),
+-- MERIDIAN MALL
+(
+  (SELECT id FROM city WHERE name='Dunedin'),
+  (SELECT id FROM classification WHERE name='City Centre'),
+  (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
+  'MERIDIAN MALL',
+  'MERIDIAN MALL',
+  'MERIDIANMALL_45.jpg',
+  '267-287 George Street, CBD, Dunedin',
+  '1997-09-01', 0.9390,
+  520, 150, NULL, 3, 15385.00
+),
+-- THE BASE
+(
+  (SELECT id FROM city WHERE name='Hamilton'),
+  (SELECT id FROM classification WHERE name='Major Regional Centre'),
+  (SELECT id FROM centre_type WHERE name='Enclosed Integrated Centre'),
+  'THE BASE',
+  'THE BASE',
+  'THEBASE_46.jpg',
+  'Te Rapa Road, Te Rapa, Hamilton',
+  '2005-07-01', 29.1000,
+  515, 2136, 'Te Awa completed in August 2011.', 2, 81427.13
+),
+-- MORRISON SQUARE
+(
+  (SELECT id FROM city WHERE name='Nelson'),
+  (SELECT id FROM classification WHERE name='City Centre'),
+  (SELECT id FROM centre_type WHERE name='Open Mall'),
+  'MORRISON SQUARE',
+  'MORRISON SQUARE',
+  'MORRISONSQUARE_47.jpg',
+  '244 Hardy Street, Nelson CBD, Nelson',
+  '2008-05-01', NULL,
+  30, 16, NULL, 1, 3323.60
+),
+-- REMARKABLES PARK TOWN CENTRE
+(
+  (SELECT id FROM city WHERE name='Queenstown'),
+  (SELECT id FROM classification WHERE name='Sub Regional Centre'),
+  (SELECT id FROM centre_type WHERE name='Open Mall'),
+  'REMARKABLES PARK TOWN CENTRE',
+  'REMARKABLES PARK TOWN CENTRE',
+  'REMARKABLESPARKTOWNCENTRE_39.jpg',
+  'Hawthorne Drive, Frankton, Queenstown',
+  '1999-01-01', NULL,
+  56, 800, 'New World supermarket opened 1999 and extended 2003; four further anchor stores (The
+Warehouse, H & J Smith) opened 2000 and two more anchor stores (Noel Leeming and Smiths
+City) in 2006. Outdoor World.', 1, 22676.00
+),
+-- JOHNSONVILLE SHOPPING CENTRE
+(
+  (SELECT id FROM city WHERE name='Wellington'),
+  (SELECT id FROM classification WHERE name='Sub Regional Centre'),
+  (SELECT id FROM centre_type WHERE name='Open Mall'),
+  'JOHNSONVILLE SHOPPING CENTRE',
+  'JOHNSONVILLE SHOPPING CENTRE',
+  'JOHNSONVILLESHOPPINGCENTRE_40.webp',
+  '34 Johnsonville Road, Johnsonville, Wellington',
+  '1969-10-01', 4.1800,
+  0, 533, '1993', 1, 16249.00
+),
+-- MARINERS MALL
+(
+  (SELECT id FROM city WHERE name='Picton'),
+  (SELECT id FROM classification WHERE name='Neighbourhood Centre'),
+  (SELECT id FROM centre_type WHERE name='Enclosed Mall'),
+  'MARINERS MALL',
+  'MARINERS MALL',
+  'MARINERSMALL_48.jpg',
+  '100 High Street, Picton',
+  '1987-09-01', 0.8698,
+  0, 126, '1990, 2001, 2009.', 1, 3093.00
+),
+-- NORTHTOWN MALL
+(
+  (SELECT id FROM city WHERE name='Timaru'),
+  (SELECT id FROM classification WHERE name='Neighbourhood Centre'),
+  (SELECT id FROM centre_type WHERE name='Enclosed Integrated Centre'),
+  'NORTHTOWN MALL',
+  'NORTHTOWN MALL',
+  'NorthtownMall_49.jpg',
+  'Corner Ranui and Evans Streets, Timaru',
+  '1978-09-01', 1.9177,
+  0, 301, '861sqm; refurbishment (2001). Fuel site added Feb 2014. Supermarket Extension May 2017', 1, 6851.00
 );
 
 -- staff_user
@@ -443,6 +544,15 @@ VALUES
  'pbkdf2:sha256:1000000$k6rWfe3Eb7HKkvmw$5c928d0704d79fcea5ad5da27c07dc0448fa713f923ad90d401faaa0edd6bdc0',
  'Admin', 'One',
  'admin1@lincolnuni.ac.nz',
+ 'lecturer',
+ 'admin',
+ 'active'),
+ 
+ -- Admin user
+('DrDyason',
+ 'scrypt:32768:8:1$hWl1vSQLz974oVUW$01c4adad9a91b2166d3340218aec5a1f9978f169da8d3bc67a67c174fdf327e3c19b6aebca42afe1d5a476c882075ab0e7d66a1654712e780dd346c6fb5b97b7',
+ 'David', 'Dyson',
+ 'David.Dyason@lincoln.ac.nz',
  'lecturer',
  'admin',
  'active'),

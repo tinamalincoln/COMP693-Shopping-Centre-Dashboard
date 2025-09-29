@@ -4,8 +4,8 @@
    Created By: Tina Ma
    Description: Create the shopping centre database and related tables
    Created Date: 28/07/2025
-   Updated Date: 24/08/2025
-   Version: 1.2
+   Updated Date: 29/09/2025
+   Version: 1.3
 */
 
 -- Create a new database
@@ -78,3 +78,7 @@ CREATE TABLE staff_user (
   INDEX idx_staff_user_role (role),
   INDEX idx_staff_user_status (status)
 );
+
+
+
+
