@@ -1,5 +1,4 @@
-# COMP693-Shopping-Centre-Dashboard
-# 🏙️ Shopping Centre Dashboard
+# 🏙️ COMP693-Shopping-Centre-Dashboard
 
 A web application built with **Flask + MySQL + Bootstrap + Leaflet** to manage and explore shopping centres in New Zealand.  
 It supports city summaries, shopping centre details, staff management, and role-based access control (Visitor, Editor, Admin).
